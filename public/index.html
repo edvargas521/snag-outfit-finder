@@ -387,6 +387,33 @@
   }
   .analyze-error p{ font-size:21px; color:var(--lav); max-width:380px; margin:0 auto 22px; line-height:1.35; }
 
+  /* ---------------- Waitlist (paid-feature gate) ---------------- */
+  .waitlist{
+    border:4px solid var(--outline);
+    background:linear-gradient(180deg,#1d1534,#150e28);
+    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
+    padding:44px 22px; text-align:center;
+  }
+  .waitlist .lock-rune{
+    font-size:40px; margin-bottom:14px;
+    filter:drop-shadow(0 0 6px rgba(233,198,107,.5));
+  }
+  .waitlist-title{
+    font-family:'Press Start 2P', monospace;
+    font-size:13px; color:var(--gold); letter-spacing:1px;
+    text-shadow:2px 2px 0 var(--outline);
+    margin-bottom:14px;
+  }
+  .waitlist p.waitlist-copy{ font-size:21px; color:var(--lav); max-width:380px; margin:0 auto 22px; line-height:1.35; }
+  .waitlist-form{
+    display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+  }
+  .waitlist-success{
+    font-family:'Press Start 2P', monospace;
+    font-size:11px; color:var(--gold); letter-spacing:1px;
+    text-shadow:2px 2px 0 var(--outline);
+  }
+
   /* ---------------- Results grid ---------------- */
   .results-grid{
     display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
@@ -551,6 +578,18 @@
         </div>
       </div>
 
+      <div class="waitlist" id="waitlistState" hidden>
+        <div class="lock-rune">🔒</div>
+        <div class="waitlist-title">THE FORGE IS NOT YET LIT</div>
+        <p class="waitlist-copy">Outfit scrying is coming soon, adventurer. Leave thy scroll (email) and we'll summon thee the moment the gate opens.</p>
+        <form class="waitlist-form" id="waitlistForm">
+          <input type="email" id="waitlistEmail" name="email" class="pxinput" placeholder="you@example.com" required />
+          <button type="submit" class="pxbtn small" id="waitlistSubmit">📜 JOIN THE WAITLIST</button>
+        </form>
+        <div class="waitlist-success" id="waitlistSuccess" hidden>✦ Thou art on the list, adventurer! ✦</div>
+        <div class="error-msg" id="waitlistError" hidden>⚠ That scroll didn't send. Try again, adventurer.</div>
+      </div>
+
       <div class="scanning" id="scanningState" hidden>
         <div class="scan-rune">⚔</div>
         <div class="scan-text">SCANNING THE HERO'S GEAR<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
@@ -590,6 +629,16 @@
   const analyzeErrorText = document.getElementById('analyzeErrorText');
   const retryBtn = document.getElementById('retryBtn');
   const resultsGrid = document.getElementById('resultsGrid');
+  const waitlistState = document.getElementById('waitlistState');
+  const waitlistForm = document.getElementById('waitlistForm');
+  const waitlistEmail = document.getElementById('waitlistEmail');
+  const waitlistSubmit = document.getElementById('waitlistSubmit');
+  const waitlistSuccess = document.getElementById('waitlistSuccess');
+  const waitlistError = document.getElementById('waitlistError');
+
+  // Detection is free-tier-launch gated: swap this for the real Formspree
+  // endpoint from your Formspree dashboard before deploying.
+  const WAITLIST_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
 
   const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -604,6 +653,10 @@
     analyzeError.hidden = true;
     resultsGrid.hidden = true;
     resultsGrid.innerHTML = '';
+    waitlistState.hidden = true;
+    waitlistForm.hidden = false;
+    waitlistSuccess.hidden = true;
+    waitlistError.hidden = true;
   };
 
   const showPreview = (src) => {
@@ -724,8 +777,36 @@
   });
   urlBtn.addEventListener('click', (e) => { e.stopPropagation(); handleUrl(urlInput.value.trim()); });
 
-  identifyBtn.addEventListener('click', (e) => { e.stopPropagation(); identifyOutfit(); });
+  // Real detection (identifyOutfit) is built and working, but held back during
+  // the free-validation launch so no paid Claude API calls happen publicly.
+  // To go live: change this handler back to identifyOutfit().
+  identifyBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    resetAnalysisStates();
+    waitlistState.hidden = false;
+  });
   retryBtn.addEventListener('click', (e) => { e.stopPropagation(); identifyOutfit(); });
+
+  waitlistForm.addEventListener('click', (e) => e.stopPropagation());
+  waitlistForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    waitlistError.hidden = true;
+    waitlistSubmit.disabled = true;
+    try {
+      const res = await fetch(WAITLIST_ENDPOINT, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: new FormData(waitlistForm),
+      });
+      if (!res.ok) throw new Error('submit_failed');
+      waitlistForm.hidden = true;
+      waitlistSuccess.hidden = false;
+    } catch (err) {
+      waitlistError.hidden = false;
+    } finally {
+      waitlistSubmit.disabled = false;
+    }
+  });
 </script>
 </body>
 </html>
