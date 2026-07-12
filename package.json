@@ -1,0 +1,14 @@
+{
+  "name": "snag",
+  "version": "1.0.0",
+  "description": "SNAG — Loot the Look. AI outfit finder.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
