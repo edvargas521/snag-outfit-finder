@@ -504,6 +504,17 @@
   .deco{ display:none; position:fixed; pointer-events:none; z-index:1; }
   @media (max-width:1150px){ .deco{ display:none !important; } }
 
+  /* per-theme icon swaps: default to the dungeon glyph, themes flip which one shows */
+  .icon-y2k, .icon-hologram{ display:none; }
+  [data-theme="y2k"] .icon-dungeon{ display:none; }
+  [data-theme="y2k"] .icon-y2k{ display:inline; }
+  [data-theme="hologram"] .icon-dungeon{ display:none; }
+  [data-theme="hologram"] .icon-hologram{ display:inline; }
+
+  .empty-icon{ display:none; font-size:52px; line-height:1; margin:0 auto 12px; animation:helmfloat 2.4s ease-in-out infinite; }
+  [data-theme="y2k"] .empty-icon.icon-y2k{ display:block; filter:drop-shadow(0 0 10px rgba(255,143,201,.6)); }
+  [data-theme="hologram"] .empty-icon.icon-hologram{ display:block; color:var(--gold); filter:none; }
+
   /* ============================================================
      THEME: Y2K DREAMCORE — chrome sticker collage, liminal-mall haze
      ============================================================ */
@@ -899,7 +910,11 @@
 
     <!-- Upload = the dungeon gate -->
     <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Upload an outfit photo">
-      <div class="rune">🛡️</div>
+      <div class="rune">
+        <span class="icon-dungeon">🛡️</span>
+        <span class="icon-y2k" aria-hidden="true">🪩</span>
+        <span class="icon-hologram" aria-hidden="true">⌖</span>
+      </div>
       <div class="drop-title">DROP AN OUTFIT PHOTO HERE</div>
       <div class="drop-sub">PNG · JPG · WEBP — a person or a 2D character</div>
       <div class="drop-or">— OR —</div>
@@ -925,11 +940,11 @@
         <div class="item-card-frame">
           <img id="previewImg" alt="Uploaded outfit preview" />
         </div>
-        <button class="pxbtn big" id="identifyBtn">⚔ IDENTIFY THE OUTFIT</button>
+        <button class="pxbtn big" id="identifyBtn"><span class="icon-dungeon">⚔</span><span class="icon-y2k" aria-hidden="true">✨</span><span class="icon-hologram" aria-hidden="true">▶</span> IDENTIFY THE OUTFIT</button>
       </div>
 
       <div class="empty" id="emptyState">
-        <svg class="helm-icon" viewBox="0 0 14 16" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="helm-icon icon-dungeon" viewBox="0 0 14 16" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <rect x="5" y="0" width="2" height="1" fill="var(--lav-lite)"/>
           <rect x="7" y="0" width="2" height="1" fill="var(--lav)"/>
           <rect x="4" y="1" width="3" height="1" fill="var(--lav-lite)"/>
@@ -977,6 +992,8 @@
           <rect x="10" y="14" width="4" height="1" fill="var(--stone-2)"/>
           <rect x="0" y="15" width="14" height="1" fill="var(--stone-2)"/>
         </svg>
+        <span class="empty-icon icon-y2k" aria-hidden="true">💖</span>
+        <span class="empty-icon icon-hologram" aria-hidden="true">◎</span>
         <p>No loot yet, adventurer. Each piece — with its price and cheaper &amp; pricier swaps — appears here after the quest.</p>
 
         <div class="slot-grid" aria-hidden="true">
@@ -988,25 +1005,37 @@
       </div>
 
       <div class="waitlist" id="waitlistState" hidden>
-        <div class="lock-rune">🔒</div>
+        <div class="lock-rune">
+          <span class="icon-dungeon">🔒</span>
+          <span class="icon-y2k" aria-hidden="true">💌</span>
+          <span class="icon-hologram" aria-hidden="true">⛔</span>
+        </div>
         <div class="waitlist-title">THE FORGE IS NOT YET LIT</div>
         <p class="waitlist-copy">Outfit scrying is coming soon, adventurer. Leave thy scroll (email) and we'll summon thee the moment the gate opens.</p>
         <form class="waitlist-form" id="waitlistForm">
           <input type="email" id="waitlistEmail" name="email" class="pxinput" placeholder="you@example.com" required />
-          <button type="submit" class="pxbtn small" id="waitlistSubmit">📜 JOIN THE WAITLIST</button>
+          <button type="submit" class="pxbtn small" id="waitlistSubmit"><span class="icon-dungeon">📜</span><span class="icon-y2k" aria-hidden="true">💖</span><span class="icon-hologram" aria-hidden="true">▶</span> JOIN THE WAITLIST</button>
         </form>
         <div class="waitlist-success" id="waitlistSuccess" hidden>✦ Thou art on the list, adventurer! ✦</div>
         <div class="error-msg" id="waitlistError" hidden>⚠ That scroll didn't send. Try again, adventurer.</div>
       </div>
 
       <div class="scanning" id="scanningState" hidden>
-        <div class="scan-rune">⚔</div>
+        <div class="scan-rune">
+          <span class="icon-dungeon">⚔</span>
+          <span class="icon-y2k" aria-hidden="true">⚡</span>
+          <span class="icon-hologram" aria-hidden="true">⟳</span>
+        </div>
         <div class="scan-text">SCANNING THE HERO'S GEAR<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
         <div class="scan-bar"><div class="scan-bar-fill"></div></div>
       </div>
 
       <div class="analyze-error" id="analyzeError" hidden>
-        <div class="warn-rune">☠</div>
+        <div class="warn-rune">
+          <span class="icon-dungeon">☠</span>
+          <span class="icon-y2k" aria-hidden="true">💔</span>
+          <span class="icon-hologram" aria-hidden="true">⚠</span>
+        </div>
         <p id="analyzeErrorText">The scrying orb went dark — try again, adventurer.</p>
         <button class="pxbtn" id="retryBtn">↺ TRY AGAIN</button>
       </div>
