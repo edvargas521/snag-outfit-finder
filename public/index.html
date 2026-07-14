@@ -4,6 +4,22 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SNAG — Loot the Look</title>
+<meta name="description" content="Upload a photo of any outfit — real or a 2D character — and SNAG names every piece of gear, ready to shop." />
+<meta name="theme-color" content="#241a3a" />
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/favicon.svg" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="SNAG" />
+<meta property="og:title" content="SNAG — Loot the Look" />
+<meta property="og:description" content="Upload a photo of any outfit — real or a 2D character — and SNAG names every piece of gear, ready to shop." />
+<meta property="og:url" content="https://snag-outfit-finder.vercel.app/" />
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="SNAG — Loot the Look" />
+<meta name="twitter:description" content="Upload a photo of any outfit — real or a 2D character — and SNAG names every piece of gear, ready to shop." />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Righteous&family=Quicksand:wght@500;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -804,6 +820,11 @@
 </style>
 </head>
 <body>
+<noscript>
+  <div style="max-width:520px;margin:80px auto;padding:24px;text-align:center;font-family:sans-serif;background:#241a3a;color:#e9ddbf;border:4px solid #0b0715;">
+    SNAG needs JavaScript to work — please enable it in your browser to upload and identify outfits.
+  </div>
+</noscript>
 <script>
   // Applied before first paint so switching themes on reload doesn't flash the default look.
   try {
@@ -1096,6 +1117,7 @@
   const WAITLIST_ENDPOINT = 'https://formspree.io/f/xgogwbjy';
 
   const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB — stay well under the server's 15MB request cap
 
   // Holds the captured outfit image for the next step (analysis) to use.
   let outfitImage = null; // { source: 'file'|'url', file: File|null, url: string|null, dataUrl: string }
@@ -1178,6 +1200,10 @@
     clearError();
     if (!file || !ACCEPTED_TYPES.includes(file.type)) {
       showError('⚠ That scroll is unreadable, adventurer. (Use a JPG, PNG, or WEBP image.)');
+      return;
+    }
+    if (file.size > MAX_FILE_BYTES) {
+      showError('⚠ That scroll is too heavy to carry, adventurer. (Keep it under 10MB.)');
       return;
     }
     const reader = new FileReader();
