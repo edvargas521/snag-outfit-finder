@@ -48,10 +48,9 @@
     position:fixed; inset:0;
     pointer-events:none;
     background-image:
-      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,0.10) 1px, transparent 1px);
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.09) 1px, transparent 1px);
     background-size:4px 4px, 4px 4px;
-    mix-blend-mode:overlay;
     z-index:1;
   }
   /* torch-lit vignette */
@@ -332,8 +331,9 @@
     content:""; position:absolute; top:0; left:-40%; width:40%; height:100%;
     background:linear-gradient(90deg,transparent,rgba(233,221,191,.35),transparent);
     animation:sweep 1.4s linear infinite;
+    will-change:transform;
   }
-  @keyframes sweep{ 0%{left:-40%;} 100%{left:120%;} }
+  @keyframes sweep{ 0%{transform:translateX(0);} 100%{transform:translateX(400%);} }
   .slot .ln.short{ width:55%; }
   .slot .ln.price{ width:40%; background:var(--gold-deep); }
 
