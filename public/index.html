@@ -6,7 +6,7 @@
 <title>SNAG — Loot the Look</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Righteous&family=Quicksand:wght@500;700&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root{
     /* dungeon palette pulled from the reference mockup */
@@ -22,6 +22,21 @@
     --gold-deep:#b8923c;
     --blood:#b5485f;
     --outline:#0b0715;
+    --glow:#2b2147;
+    --void-2:#1a1230;
+    --panel-deep:#120c26;
+    --footer-bg:#150e28;
+    --slot-bg:#191130;
+    --gold-lite:#f2d178;
+    --panel-bg:linear-gradient(180deg,#1d1534,#150e28);
+    --card-bg:linear-gradient(180deg,#211736,#160f28);
+    --header-bg:linear-gradient(180deg, var(--deep) 0%, var(--void-2) 100%);
+    --dropzone-bg:linear-gradient(180deg, #221a38 0%, #17102a 100%);
+    --dropzone-drag-bg:linear-gradient(180deg,#2c2148,#1c1436);
+    --error-bg:linear-gradient(180deg,#3a1524,#2a0f1c);
+    --font-display:'Press Start 2P', monospace;
+    --font-body:'VT323', monospace;
+    --radius:0px;
 
     /* the 8-bit knight gauntlet cursor */
     --gauntlet:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA2ElEQVR4nGNkIABEBDT+45N/8+EGIyEz8AEmSjRTA+B0PcznTRMm4DWgrqCAgYGB/JAY8BBgIVZhkJ89Cn/dpoNUccCAh8CoA0YdQHQuIATQS0xiy4WhHwK4Ssq6ggKiQmTohwCshISVjIgScwKKOliIoIfE4AkBQvU+DKD7lFg+LjDgIcBIbL1PKcDVbhjwEMDIBej1PqVg0KeBUQdgpAFqtfWIBQMeAvA8iV4eHDt0hCKDrexsGBgYCPcbBjwEcNaGMB/QGgx4CGDEC7G1IrGAUNtwwEMAAG6sScJXb5pmAAAAAElFTkSuQmCC);
@@ -32,10 +47,10 @@
 
   html,body{height:100%;}
   body{
-    font-family:'VT323', monospace;
+    font-family:var(--font-body);
     color:var(--cream);
     background:
-      radial-gradient(120% 80% at 50% -10%, #2b2147 0%, var(--dusk) 45%, var(--void) 100%);
+      radial-gradient(120% 80% at 50% -10%, var(--glow) 0%, var(--dusk) 45%, var(--void) 100%);
     min-height:100%;
     cursor: var(--gauntlet) 11 1, auto;
     image-rendering: pixelated;
@@ -72,7 +87,7 @@
     gap:16px; flex-wrap:wrap;
     padding:20px clamp(16px,4vw,44px);
     border-bottom:4px solid var(--outline);
-    background:linear-gradient(180deg, #241a3a 0%, #1a1230 100%);
+    background:var(--header-bg);
     box-shadow:inset 0 -6px 0 rgba(0,0,0,.35), inset 0 4px 0 rgba(255,255,255,.04);
   }
 
@@ -85,7 +100,7 @@
   }
   .battlement span{ width:10px; height:12px; background:var(--lav); box-shadow:inset -2px -2px 0 rgba(0,0,0,.35); }
   .plaque{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:18px; letter-spacing:1px;
     color:var(--cream);
     background:var(--stone);
@@ -99,7 +114,7 @@
   .tag{ font-size:20px; color:var(--lav-lite); letter-spacing:1px; }
 
   .menu{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:9px; color:var(--cream);
     background:var(--stone-2);
     padding:12px 14px;
@@ -110,6 +125,25 @@
   .menu:hover{ transform:translateY(-2px); background:var(--stone); }
   .menu:active{ transform:translateY(2px); box-shadow:inset 3px 3px 0 rgba(0,0,0,.45); }
 
+  .header-actions{ display:flex; align-items:center; gap:12px; }
+  .theme-switcher{ display:flex; gap:6px; }
+  .theme-btn{
+    width:38px; height:38px;
+    font-size:16px; line-height:1;
+    display:grid; place-items:center;
+    background:var(--stone-2);
+    border:3px solid var(--outline);
+    box-shadow:inset -2px -2px 0 rgba(0,0,0,.4), inset 2px 2px 0 rgba(255,255,255,.12);
+    transition:transform .12s ease-out, background-color .12s ease-out;
+    filter:grayscale(1) brightness(.75);
+  }
+  .theme-btn:hover{ transform:translateY(-2px); filter:grayscale(.4) brightness(.95); }
+  .theme-btn.active{
+    background:var(--gold);
+    filter:none;
+    box-shadow:inset -2px -2px 0 var(--gold-deep), inset 2px 2px 0 #f7e29a, 0 0 0 2px var(--gold);
+  }
+
   /* ---------------- Main quest area ---------------- */
   main{
     max-width:820px; margin:0 auto;
@@ -118,7 +152,7 @@
   }
 
   .eyebrow{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:9px; color:var(--gold);
     letter-spacing:2px;
     display:inline-block; margin-bottom:22px;
@@ -128,7 +162,7 @@
   @keyframes blink{ 50%{opacity:.35;} }
 
   h1{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:clamp(18px,4.4vw,30px);
     line-height:1.5;
     color:var(--cream);
@@ -150,13 +184,13 @@
     border:5px dashed var(--stone-2);
     background:
       repeating-linear-gradient(45deg, rgba(74,59,115,.18) 0 8px, rgba(36,26,58,.18) 8px 16px),
-      linear-gradient(180deg, #221a38 0%, #17102a 100%);
+      var(--dropzone-bg);
     padding:clamp(34px,7vw,60px) 24px;
     box-shadow:inset -6px -6px 0 rgba(0,0,0,.45), inset 6px 6px 0 rgba(255,255,255,.05), 0 8px 0 var(--outline);
     transition:transform .18s ease-out, border-color .18s ease-out;
   }
   .dropzone:hover{ border-color:var(--gold); transform:translateY(-2px); }
-  .dropzone.dragging{ border-color:var(--gold); background:linear-gradient(180deg,#2c2148,#1c1436); transform:scale(1.01); }
+  .dropzone.dragging{ border-color:var(--gold); background:var(--dropzone-drag-bg); transform:scale(1.01); }
 
   .rune{
     width:76px; height:76px; margin:0 auto 20px;
@@ -169,19 +203,19 @@
   }
 
   .drop-title{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:13px; color:var(--cream);
     line-height:1.7; margin-bottom:12px;
     text-shadow:2px 2px 0 var(--outline);
   }
   .drop-sub{ font-size:19px; color:var(--lav); letter-spacing:.5px; }
   .drop-or{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:8px; color:var(--stone-2); margin:18px 0 14px; letter-spacing:2px;
   }
 
   .pxbtn{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:11px; letter-spacing:1px;
     color:var(--outline);
     background:var(--gold);
@@ -190,7 +224,7 @@
     box-shadow:inset -4px -4px 0 var(--gold-deep), inset 4px 4px 0 #f7e29a, 0 6px 0 var(--outline);
     transition:transform .12s ease-out, box-shadow .12s ease-out;
   }
-  .pxbtn:hover{ background:#f2d178; transform:translateY(-2px); }
+  .pxbtn:hover{ background:var(--gold-lite); transform:translateY(-2px); }
   .pxbtn:active{ transform:translateY(4px); box-shadow:inset 4px 4px 0 var(--gold-deep), 0 2px 0 var(--outline); }
 
   .hint{ margin-top:20px; font-size:17px; color:var(--stone-2); letter-spacing:.5px; }
@@ -201,10 +235,10 @@
     margin-bottom:4px;
   }
   .pxinput{
-    font-family:'VT323', monospace;
+    font-family:var(--font-body);
     font-size:18px;
     color:var(--cream);
-    background:#120c26;
+    background:var(--panel-deep);
     border:4px solid var(--outline);
     box-shadow:inset -3px -3px 0 rgba(0,0,0,.45), inset 3px 3px 0 rgba(255,255,255,.05);
     padding:10px 12px;
@@ -219,10 +253,10 @@
   .pxbtn.big{ font-size:14px; padding:18px 30px; }
 
   .error-msg{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:9px; line-height:1.7;
     color:var(--cream);
-    background:linear-gradient(180deg,#3a1524,#2a0f1c);
+    background:var(--error-bg);
     border:3px solid var(--outline);
     box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.06);
     padding:12px 14px;
@@ -235,7 +269,7 @@
   .loot{ margin-top:58px; text-align:left; }
   .loot-head{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
   .loot-head h2{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:12px; color:var(--gold); letter-spacing:1px;
     text-shadow:2px 2px 0 var(--outline);
   }
@@ -244,7 +278,7 @@
   /* ---------------- Preview item card ---------------- */
   .item-card{
     border:4px solid var(--outline);
-    background:linear-gradient(180deg,#1d1534,#150e28);
+    background:var(--panel-bg);
     box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
     padding:clamp(22px,5vw,36px) 22px;
     text-align:center;
@@ -252,7 +286,7 @@
   }
   .item-card-frame{
     display:inline-block;
-    background:#120c26;
+    background:var(--panel-deep);
     border:4px solid var(--outline);
     padding:8px;
     box-shadow:inset -3px -3px 0 rgba(0,0,0,.45), inset 3px 3px 0 rgba(255,255,255,.05), 0 6px 0 var(--outline);
@@ -269,7 +303,7 @@
 
   .empty{
     border:4px solid var(--outline);
-    background:linear-gradient(180deg,#1d1534,#150e28);
+    background:var(--panel-bg);
     box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
     padding:44px 22px; text-align:center;
   }
@@ -283,7 +317,7 @@
   }
   .slot{
     border:4px solid var(--outline);
-    background:#191130;
+    background:var(--slot-bg);
     box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.05);
     padding:12px;
     /* gentle 8-bit "empty slot" pulse */
@@ -297,10 +331,10 @@
   .slot .thumb{
     width:100%; aspect-ratio:1/1; margin-bottom:12px;
     /* dungeon inventory checker background */
-    background-color:#120c26;
+    background-color:var(--panel-deep);
     background-image:
-      linear-gradient(45deg,#241a3a 25%,transparent 25%,transparent 75%,#241a3a 75%),
-      linear-gradient(45deg,#241a3a 25%,transparent 25%,transparent 75%,#241a3a 75%);
+      linear-gradient(45deg,var(--deep) 25%,transparent 25%,transparent 75%,var(--deep) 75%),
+      linear-gradient(45deg,var(--deep) 25%,transparent 25%,transparent 75%,var(--deep) 75%);
     background-size:12px 12px;
     background-position:0 0,6px 6px;
     border:3px solid var(--outline);
@@ -340,7 +374,7 @@
   /* ---------------- Scanning (loading) state ---------------- */
   .scanning{
     border:4px solid var(--outline);
-    background:linear-gradient(180deg,#1d1534,#150e28);
+    background:var(--panel-bg);
     box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
     padding:50px 22px; text-align:center;
   }
@@ -352,7 +386,7 @@
   }
   @keyframes scanwiggle{ 0%,100%{transform:rotate(-8deg);} 50%{transform:rotate(8deg) scale(1.08);} }
   .scan-text{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:12px; color:var(--gold); letter-spacing:1px;
     text-shadow:2px 2px 0 var(--outline);
   }
@@ -364,7 +398,7 @@
   .scan-bar{
     width:220px; height:14px; margin:26px auto 0;
     border:3px solid var(--outline);
-    background:#120c26;
+    background:var(--panel-deep);
     overflow:hidden;
     box-shadow:inset -2px -2px 0 rgba(0,0,0,.4), inset 2px 2px 0 rgba(255,255,255,.05);
   }
@@ -378,7 +412,7 @@
   /* ---------------- Analyze error state ---------------- */
   .analyze-error{
     border:4px solid var(--outline);
-    background:linear-gradient(180deg,#1d1534,#150e28);
+    background:var(--panel-bg);
     box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
     padding:44px 22px; text-align:center;
   }
@@ -391,7 +425,7 @@
   /* ---------------- Waitlist (paid-feature gate) ---------------- */
   .waitlist{
     border:4px solid var(--outline);
-    background:linear-gradient(180deg,#1d1534,#150e28);
+    background:var(--panel-bg);
     box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
     padding:44px 22px; text-align:center;
   }
@@ -400,7 +434,7 @@
     filter:drop-shadow(0 0 6px rgba(233,198,107,.5));
   }
   .waitlist-title{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:13px; color:var(--gold); letter-spacing:1px;
     text-shadow:2px 2px 0 var(--outline);
     margin-bottom:14px;
@@ -410,7 +444,7 @@
     display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
   }
   .waitlist-success{
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:11px; color:var(--gold); letter-spacing:1px;
     text-shadow:2px 2px 0 var(--outline);
   }
@@ -422,13 +456,13 @@
   }
   .loot-card{
     border:4px solid var(--outline);
-    background:linear-gradient(180deg,#211736,#160f28);
+    background:var(--card-bg);
     box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.05), 0 6px 0 var(--outline);
     padding:16px;
   }
   .loot-card .cat-badge{
     display:inline-block;
-    font-family:'Press Start 2P', monospace;
+    font-family:var(--font-display);
     font-size:8px; letter-spacing:1px; text-transform:uppercase;
     color:var(--outline);
     background:var(--gold);
@@ -445,7 +479,7 @@
     margin-top:8px;
   }
   .loot-card .placeholder-row .label{
-    font-family:'Press Start 2P', monospace; font-size:8px; letter-spacing:1px; color:var(--gold-deep);
+    font-family:var(--font-display); font-size:8px; letter-spacing:1px; color:var(--gold-deep);
   }
   .loot-card .placeholder-row .val{ font-size:15px; font-style:italic; color:var(--stone-2); }
 
@@ -455,19 +489,236 @@
   footer{
     position:relative; z-index:2;
     border-top:4px solid var(--outline);
-    background:#150e28;
+    background:var(--footer-bg);
     padding:26px 18px; text-align:center;
     font-size:18px; color:var(--stone-2); letter-spacing:1px;
   }
   footer .press{
-    font-family:'Press Start 2P', monospace; font-size:9px; color:var(--gold);
+    font-family:var(--font-display); font-size:9px; color:var(--gold);
     animation:blink 1.4s ease-in-out infinite; text-shadow:2px 2px 0 var(--outline);
   }
 
   input[type="file"]{ display:none; }
+
+  /* ============================================================
+     THEME: Y2K DREAMCORE — hazy liminal-mall glow + glossy chrome
+     ============================================================ */
+  [data-theme="y2k"]{
+    --void:#150c28;
+    --dusk:#241640;
+    --deep:#33224f;
+    --stone:#5c6f9c;
+    --stone-2:#8ea0c9;
+    --lav:#a996d9;
+    --lav-lite:#dcc9f5;
+    --cream:#fdf3ff;
+    --gold:#ff8fc9;
+    --gold-deep:#e0579f;
+    --gold-lite:#ffc3e6;
+    --blood:#ff6f8f;
+    --outline:#1a0f30;
+    --glow:#4a2f6b;
+    --void-2:#180d2c;
+    --panel-deep:#170e2c;
+    --footer-bg:#150c28;
+    --slot-bg:#20153c;
+    --panel-bg:linear-gradient(180deg,#2c1d48,#180d2c);
+    --card-bg:linear-gradient(180deg,#2c1d48,#180d2c);
+    --header-bg:linear-gradient(180deg,#3a2a5c 0%,#1c1136 100%);
+    --dropzone-bg:linear-gradient(180deg,#2a1c46 0%,#170d2a 100%);
+    --dropzone-drag-bg:linear-gradient(180deg,#3d2a5e,#1f1338);
+    --error-bg:linear-gradient(180deg,#5c2340,#341226);
+    --font-display:'Righteous', cursive;
+    --font-body:'Quicksand', sans-serif;
+    --radius:18px;
+  }
+  [data-theme="y2k"] body{
+    background:
+      radial-gradient(120% 90% at 20% -10%, rgba(126,232,250,.16) 0%, transparent 45%),
+      radial-gradient(110% 90% at 90% 10%, rgba(255,143,201,.18) 0%, transparent 50%),
+      radial-gradient(120% 80% at 50% -10%, var(--glow) 0%, var(--dusk) 45%, var(--void) 100%);
+    cursor:auto;
+  }
+  [data-theme="y2k"] a, [data-theme="y2k"] button, [data-theme="y2k"] .clickable, [data-theme="y2k"] [role="button"]{ cursor:pointer; }
+  [data-theme="y2k"] body::before{ display:none; }
+
+  [data-theme="y2k"] .plaque,
+  [data-theme="y2k"] .menu,
+  [data-theme="y2k"] .theme-btn,
+  [data-theme="y2k"] .pxbtn,
+  [data-theme="y2k"] .pxinput,
+  [data-theme="y2k"] .rune,
+  [data-theme="y2k"] .item-card-frame,
+  [data-theme="y2k"] .slot,
+  [data-theme="y2k"] .slot .thumb,
+  [data-theme="y2k"] .loot-card,
+  [data-theme="y2k"] .placeholder-row,
+  [data-theme="y2k"] .error-msg,
+  [data-theme="y2k"] .cat-badge{
+    border-radius:var(--radius);
+  }
+
+  [data-theme="y2k"] .pxbtn{
+    background:linear-gradient(180deg,#fff 0%,#ffd6ee 25%,var(--gold) 60%,var(--gold-deep) 100%);
+    box-shadow:0 4px 14px rgba(255,143,201,.45), inset 0 1px 0 rgba(255,255,255,.8);
+    border:2px solid rgba(255,255,255,.6);
+    color:#3a1c46;
+    text-shadow:none;
+  }
+  [data-theme="y2k"] .pxbtn:hover{ background:linear-gradient(180deg,#fff 0%,#ffe4f4 25%,var(--gold-lite) 60%,var(--gold) 100%); }
+  [data-theme="y2k"] .pxbtn:active{ box-shadow:0 2px 6px rgba(255,143,201,.4), inset 0 1px 0 rgba(255,255,255,.6); }
+
+  [data-theme="y2k"] .menu, [data-theme="y2k"] .theme-btn{
+    background:linear-gradient(180deg,#e8eefc 0%,#b7c6ea 50%,#8497c4 100%);
+    border:2px solid rgba(255,255,255,.6);
+    color:#2a2350;
+    box-shadow:0 3px 10px rgba(60,50,120,.35), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+  [data-theme="y2k"] .theme-btn.active{
+    background:linear-gradient(180deg,#fff 0%,#ffd6ee 60%,var(--gold) 100%);
+    box-shadow:0 0 0 2px var(--gold), 0 3px 10px rgba(255,143,201,.5);
+    filter:none;
+  }
+
+  [data-theme="y2k"] .plaque{
+    background:linear-gradient(180deg,#fff 0%,#d9c9f5 50%,#a993dd 100%);
+    color:#2a1c46; text-shadow:none;
+    border:2px solid rgba(255,255,255,.7);
+  }
+  [data-theme="y2k"] .plaque .a{ color:var(--gold-deep); }
+  [data-theme="y2k"] .battlement span{ background:linear-gradient(180deg,#fff,#a996d9); border-radius:3px; box-shadow:none; }
+
+  [data-theme="y2k"] h1, [data-theme="y2k"] .eyebrow, [data-theme="y2k"] .drop-title,
+  [data-theme="y2k"] .waitlist-title, [data-theme="y2k"] .scan-text, [data-theme="y2k"] .loot-head h2{
+    text-shadow:0 2px 0 rgba(255,255,255,.35), 0 0 18px rgba(255,143,201,.5);
+  }
+
+  [data-theme="y2k"] .dropzone{ border-style:solid; border-color:var(--stone-2); }
+  [data-theme="y2k"] .pxinput{ background:rgba(255,255,255,.85); color:#2a1c46; border:2px solid var(--stone-2); }
+  [data-theme="y2k"] .pxinput::placeholder{ color:#8a7fae; }
+
+  /* ============================================================
+     THEME: HOLOGRAM — Japanese neon-cyberpunk glass HUD
+     ============================================================ */
+  [data-theme="hologram"]{
+    --void:#04010c;
+    --dusk:#0a0518;
+    --deep:#0f0a22;
+    --stone:#1a1030;
+    --stone-2:#26173f;
+    --lav:#7fe9ff;
+    --lav-lite:#c9f9ff;
+    --cream:#eafcff;
+    --gold:#00fff2;
+    --gold-deep:#00b3a8;
+    --gold-lite:#9dfff5;
+    --blood:#ff2fd0;
+    --outline:#000000;
+    --glow:#1a0a3a;
+    --void-2:#08041a;
+    --panel-deep:#070213;
+    --footer-bg:#04010c;
+    --slot-bg:#0a0620;
+    --panel-bg:linear-gradient(180deg, rgba(15,10,34,.92), rgba(4,1,12,.96));
+    --card-bg:linear-gradient(180deg, rgba(15,10,34,.92), rgba(4,1,12,.96));
+    --header-bg:linear-gradient(180deg, rgba(15,10,34,.95), rgba(4,1,12,.98));
+    --dropzone-bg:linear-gradient(180deg, rgba(15,10,34,.85), rgba(4,1,12,.92));
+    --dropzone-drag-bg:linear-gradient(180deg, rgba(0,255,242,.12), rgba(4,1,12,.92));
+    --error-bg:linear-gradient(180deg, rgba(80,10,60,.6), rgba(20,2,15,.9));
+    --font-display:'Orbitron', sans-serif;
+    --font-body:'Share Tech Mono', monospace;
+    --radius:2px;
+  }
+  [data-theme="hologram"] body{
+    background:
+      repeating-linear-gradient(0deg, rgba(0,255,242,.035) 0px, rgba(0,255,242,.035) 1px, transparent 1px, transparent 3px),
+      radial-gradient(120% 80% at 50% -10%, #140830 0%, var(--dusk) 45%, var(--void) 100%);
+    cursor:auto;
+  }
+  [data-theme="hologram"] a, [data-theme="hologram"] button, [data-theme="hologram"] .clickable, [data-theme="hologram"] [role="button"]{ cursor:crosshair; }
+  [data-theme="hologram"] body::before{ display:none; }
+  [data-theme="hologram"] body::after{
+    background:radial-gradient(120% 90% at 50% 30%, transparent 30%, rgba(0,0,0,.85) 100%);
+  }
+
+  [data-theme="hologram"] header,
+  [data-theme="hologram"] .dropzone,
+  [data-theme="hologram"] .rune,
+  [data-theme="hologram"] .item-card-frame,
+  [data-theme="hologram"] .slot,
+  [data-theme="hologram"] .slot .thumb,
+  [data-theme="hologram"] .loot-card,
+  [data-theme="hologram"] .empty,
+  [data-theme="hologram"] .item-card,
+  [data-theme="hologram"] .scanning,
+  [data-theme="hologram"] .analyze-error,
+  [data-theme="hologram"] .waitlist,
+  [data-theme="hologram"] .error-msg,
+  [data-theme="hologram"] .placeholder-row{
+    border-width:1px;
+    border-color:var(--gold);
+    box-shadow:0 0 12px rgba(0,255,242,.35), inset 0 0 20px rgba(0,255,242,.06);
+  }
+
+  [data-theme="hologram"] .pxbtn{
+    background:transparent;
+    color:var(--gold);
+    border:1px solid var(--gold);
+    text-shadow:0 0 6px var(--gold);
+    box-shadow:0 0 14px rgba(0,255,242,.4), inset 0 0 12px rgba(0,255,242,.08);
+    clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+  }
+  [data-theme="hologram"] .pxbtn:hover{ background:rgba(0,255,242,.12); box-shadow:0 0 22px rgba(0,255,242,.6); }
+  [data-theme="hologram"] .pxbtn:active{ background:rgba(0,255,242,.2); }
+
+  [data-theme="hologram"] .menu, [data-theme="hologram"] .theme-btn{
+    background:rgba(0,255,242,.05);
+    border:1px solid var(--gold);
+    color:var(--gold);
+    box-shadow:0 0 10px rgba(0,255,242,.3);
+  }
+  [data-theme="hologram"] .theme-btn.active{
+    background:rgba(255,47,208,.15);
+    border-color:var(--blood);
+    color:var(--blood);
+    box-shadow:0 0 14px rgba(255,47,208,.6);
+    filter:none;
+  }
+
+  [data-theme="hologram"] .plaque{
+    background:rgba(0,255,242,.06);
+    border:1px solid var(--gold);
+    color:var(--gold);
+    text-shadow:0 0 10px var(--gold);
+    box-shadow:0 0 16px rgba(0,255,242,.4);
+  }
+  [data-theme="hologram"] .plaque .a{ color:var(--blood); text-shadow:0 0 10px var(--blood); }
+  [data-theme="hologram"] .battlement span{ background:var(--gold); box-shadow:0 0 6px var(--gold); }
+
+  [data-theme="hologram"] h1, [data-theme="hologram"] .eyebrow, [data-theme="hologram"] .drop-title,
+  [data-theme="hologram"] .waitlist-title, [data-theme="hologram"] .scan-text, [data-theme="hologram"] .loot-head h2{
+    text-shadow:0 0 10px var(--gold), 0 0 22px rgba(0,255,242,.5);
+  }
+
+  [data-theme="hologram"] .pxinput{
+    background:rgba(0,255,242,.05);
+    color:var(--lav-lite);
+    border:1px solid var(--gold);
+  }
+  [data-theme="hologram"] .pxinput::placeholder{ color:rgba(127,233,255,.4); }
+  [data-theme="hologram"] .helm-icon{ filter:drop-shadow(0 0 10px var(--gold)); }
 </style>
 </head>
 <body>
+<script>
+  // Applied before first paint so switching themes on reload doesn't flash the default look.
+  try {
+    var savedTheme = localStorage.getItem('snag-theme');
+    if (savedTheme === 'y2k' || savedTheme === 'hologram') {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  } catch (e) {}
+</script>
 <div class="wrap">
 
   <header>
@@ -478,7 +729,14 @@
       </div>
       <span class="tag">▸ Loot the Look</span>
     </div>
-    <button class="menu">HOW IT WORKS</button>
+    <div class="header-actions">
+      <div class="theme-switcher" role="group" aria-label="Choose a visual theme">
+        <button class="theme-btn" data-theme-choice="dungeon" title="Dungeon" aria-label="Dungeon theme">⚔</button>
+        <button class="theme-btn" data-theme-choice="y2k" title="Y2K Dreamcore" aria-label="Y2K Dreamcore theme">💿</button>
+        <button class="theme-btn" data-theme-choice="hologram" title="Hologram" aria-label="Hologram theme">👾</button>
+      </div>
+      <button class="menu">HOW IT WORKS</button>
+    </div>
   </header>
 
   <main>
@@ -615,6 +873,23 @@
 </div>
 
 <script>
+  const themeButtons = document.querySelectorAll('.theme-btn');
+  const applyTheme = (theme) => {
+    if (theme === 'dungeon') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    try { localStorage.setItem('snag-theme', theme); } catch (e) {}
+    themeButtons.forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.themeChoice === theme);
+    });
+  };
+  themeButtons.forEach((btn) => {
+    btn.addEventListener('click', () => applyTheme(btn.dataset.themeChoice));
+  });
+  applyTheme(document.documentElement.getAttribute('data-theme') || 'dungeon');
+
   const dropzone   = document.getElementById('dropzone');
   const fileInput  = document.getElementById('fileInput');
   const browseBtn  = document.getElementById('browseBtn');
