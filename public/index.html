@@ -6,7 +6,7 @@
 <title>SNAG — Loot the Look</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Righteous&family=Quicksand:wght@500;700&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Righteous&family=Quicksand:wght@500;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root{
     /* dungeon palette pulled from the reference mockup */
@@ -500,47 +500,60 @@
 
   input[type="file"]{ display:none; }
 
+  /* decorative theme-only elements, hidden unless their theme is active */
+  .deco{ display:none; position:fixed; pointer-events:none; z-index:1; }
+  @media (max-width:1150px){ .deco{ display:none !important; } }
+
   /* ============================================================
-     THEME: Y2K DREAMCORE — hazy liminal-mall glow + glossy chrome
+     THEME: Y2K DREAMCORE — chrome sticker collage, liminal-mall haze
      ============================================================ */
   [data-theme="y2k"]{
-    --void:#150c28;
-    --dusk:#241640;
-    --deep:#33224f;
-    --stone:#5c6f9c;
-    --stone-2:#8ea0c9;
-    --lav:#a996d9;
-    --lav-lite:#dcc9f5;
-    --cream:#fdf3ff;
+    --void:#2a1848;
+    --dusk:#3d2566;
+    --deep:#4a2d7a;
+    --stone:#7b8fc9;
+    --stone-2:#9fb3e0;
+    --lav:#b39ce8;
+    --lav-lite:#e6d6f7;
+    --cream:#fff8fd;
     --gold:#ff8fc9;
-    --gold-deep:#e0579f;
-    --gold-lite:#ffc3e6;
+    --gold-deep:#c94f96;
+    --gold-lite:#ffc8e8;
     --blood:#ff6f8f;
-    --outline:#1a0f30;
-    --glow:#4a2f6b;
-    --void-2:#180d2c;
-    --panel-deep:#170e2c;
-    --footer-bg:#150c28;
-    --slot-bg:#20153c;
-    --panel-bg:linear-gradient(180deg,#2c1d48,#180d2c);
-    --card-bg:linear-gradient(180deg,#2c1d48,#180d2c);
-    --header-bg:linear-gradient(180deg,#3a2a5c 0%,#1c1136 100%);
-    --dropzone-bg:linear-gradient(180deg,#2a1c46 0%,#170d2a 100%);
-    --dropzone-drag-bg:linear-gradient(180deg,#3d2a5e,#1f1338);
-    --error-bg:linear-gradient(180deg,#5c2340,#341226);
+    --outline:#3d2566;
+    --glow:#6b4fa8;
+    --void-2:#231540;
+    --panel-deep:#2c1a4d;
+    --footer-bg:#1f1240;
+    --slot-bg:#33204f;
+    --panel-bg:linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(74,45,122,.55) 45%, rgba(35,21,64,.92) 100%);
+    --card-bg:linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(74,45,122,.55) 45%, rgba(35,21,64,.92) 100%);
+    --header-bg:linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(74,45,122,.75) 60%, rgba(35,21,64,.95) 100%);
+    --dropzone-bg:linear-gradient(160deg, rgba(255,255,255,.08) 0%, rgba(61,37,102,.85) 100%);
+    --dropzone-drag-bg:linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,143,201,.35));
+    --error-bg:linear-gradient(160deg, rgba(255,111,143,.3), rgba(61,20,40,.9));
     --font-display:'Righteous', cursive;
     --font-body:'Quicksand', sans-serif;
-    --radius:18px;
+    --radius:22px;
   }
   [data-theme="y2k"] body{
     background:
-      radial-gradient(120% 90% at 20% -10%, rgba(126,232,250,.16) 0%, transparent 45%),
-      radial-gradient(110% 90% at 90% 10%, rgba(255,143,201,.18) 0%, transparent 50%),
-      radial-gradient(120% 80% at 50% -10%, var(--glow) 0%, var(--dusk) 45%, var(--void) 100%);
+      repeating-linear-gradient(180deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 3px),
+      radial-gradient(110% 70% at 15% -10%, rgba(143,232,255,.28) 0%, transparent 45%),
+      radial-gradient(100% 80% at 95% 10%, rgba(255,143,201,.32) 0%, transparent 55%),
+      radial-gradient(120% 90% at 50% 100%, rgba(179,156,232,.25) 0%, transparent 50%),
+      linear-gradient(180deg, var(--dusk) 0%, var(--void) 100%);
     cursor:auto;
   }
   [data-theme="y2k"] a, [data-theme="y2k"] button, [data-theme="y2k"] .clickable, [data-theme="y2k"] [role="button"]{ cursor:pointer; }
   [data-theme="y2k"] body::before{ display:none; }
+  [data-theme="y2k"] body::after{ display:none; }
+  [data-theme="y2k"] .deco-y2k{ display:block; }
+
+  .deco-star{ width:64px; top:96px; left:22px; transform:rotate(-16deg); filter:drop-shadow(0 8px 12px rgba(20,10,40,.45)); }
+  .deco-heart{ width:60px; bottom:70px; right:26px; transform:rotate(13deg); filter:drop-shadow(0 8px 12px rgba(20,10,40,.45)); }
+  .deco-disc{ width:52px; top:160px; right:30px; transform:rotate(-9deg); filter:drop-shadow(0 8px 12px rgba(20,10,40,.45)); animation:discspin 9s linear infinite; }
+  @keyframes discspin{ 0%{transform:rotate(-9deg);} 100%{transform:rotate(351deg);} }
 
   [data-theme="y2k"] .plaque,
   [data-theme="y2k"] .menu,
@@ -559,154 +572,224 @@
   }
 
   [data-theme="y2k"] .pxbtn{
-    background:linear-gradient(180deg,#fff 0%,#ffd6ee 25%,var(--gold) 60%,var(--gold-deep) 100%);
-    box-shadow:0 4px 14px rgba(255,143,201,.45), inset 0 1px 0 rgba(255,255,255,.8);
-    border:2px solid rgba(255,255,255,.6);
+    position:relative; overflow:hidden;
+    background:linear-gradient(180deg,#fff 0%,#ffd6ee 22%,var(--gold) 58%,var(--gold-deep) 100%);
+    box-shadow:0 5px 16px rgba(105,60,150,.5), inset 0 1px 0 rgba(255,255,255,.85), inset 0 -6px 10px rgba(120,40,90,.3);
+    border:2px solid rgba(255,255,255,.7);
     color:#3a1c46;
     text-shadow:none;
   }
-  [data-theme="y2k"] .pxbtn:hover{ background:linear-gradient(180deg,#fff 0%,#ffe4f4 25%,var(--gold-lite) 60%,var(--gold) 100%); }
-  [data-theme="y2k"] .pxbtn:active{ box-shadow:0 2px 6px rgba(255,143,201,.4), inset 0 1px 0 rgba(255,255,255,.6); }
+  [data-theme="y2k"] .pxbtn::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(120deg,#ff8fc9,#ffe08a,#8affc0,#8ac0ff,#c98aff);
+    opacity:0; transition:opacity .25s ease-out;
+  }
+  [data-theme="y2k"] .pxbtn:hover::after{ opacity:.35; }
+  [data-theme="y2k"] .pxbtn span, [data-theme="y2k"] .pxbtn{ z-index:1; }
+  [data-theme="y2k"] .pxbtn:active{ box-shadow:0 2px 6px rgba(105,60,150,.45), inset 0 1px 0 rgba(255,255,255,.6); }
 
   [data-theme="y2k"] .menu, [data-theme="y2k"] .theme-btn{
-    background:linear-gradient(180deg,#e8eefc 0%,#b7c6ea 50%,#8497c4 100%);
-    border:2px solid rgba(255,255,255,.6);
+    background:linear-gradient(180deg,#eef3ff 0%,#c3d3f5 45%,#8ea0d9 100%);
+    border:2px solid rgba(255,255,255,.7);
     color:#2a2350;
-    box-shadow:0 3px 10px rgba(60,50,120,.35), inset 0 1px 0 rgba(255,255,255,.8);
+    box-shadow:0 4px 12px rgba(60,50,120,.4), inset 0 1px 0 rgba(255,255,255,.85);
   }
   [data-theme="y2k"] .theme-btn.active{
-    background:linear-gradient(180deg,#fff 0%,#ffd6ee 60%,var(--gold) 100%);
-    box-shadow:0 0 0 2px var(--gold), 0 3px 10px rgba(255,143,201,.5);
+    background:linear-gradient(180deg,#fff 0%,#ffd6ee 55%,var(--gold) 100%);
+    box-shadow:0 0 0 2px var(--gold), 0 4px 12px rgba(255,143,201,.55);
     filter:none;
   }
 
   [data-theme="y2k"] .plaque{
-    background:linear-gradient(180deg,#fff 0%,#d9c9f5 50%,#a993dd 100%);
+    background:linear-gradient(180deg,#fff 0%,#e6d6f7 45%,#b39ce8 100%);
     color:#2a1c46; text-shadow:none;
-    border:2px solid rgba(255,255,255,.7);
+    border:2px solid rgba(255,255,255,.8);
   }
   [data-theme="y2k"] .plaque .a{ color:var(--gold-deep); }
-  [data-theme="y2k"] .battlement span{ background:linear-gradient(180deg,#fff,#a996d9); border-radius:3px; box-shadow:none; }
+  [data-theme="y2k"] .battlement{ gap:5px; }
+  [data-theme="y2k"] .battlement span{
+    width:9px; height:9px; border-radius:50%;
+    background:linear-gradient(160deg,#fff,#b39ce8 70%);
+    box-shadow:0 2px 4px rgba(20,10,40,.4);
+  }
 
   [data-theme="y2k"] h1, [data-theme="y2k"] .eyebrow, [data-theme="y2k"] .drop-title,
   [data-theme="y2k"] .waitlist-title, [data-theme="y2k"] .scan-text, [data-theme="y2k"] .loot-head h2{
-    text-shadow:0 2px 0 rgba(255,255,255,.35), 0 0 18px rgba(255,143,201,.5);
+    text-shadow:0 2px 0 rgba(255,255,255,.4), 0 0 20px rgba(255,143,201,.55);
   }
 
-  [data-theme="y2k"] .dropzone{ border-style:solid; border-color:var(--stone-2); }
-  [data-theme="y2k"] .pxinput{ background:rgba(255,255,255,.85); color:#2a1c46; border:2px solid var(--stone-2); }
+  [data-theme="y2k"] .dropzone{ border-style:solid; border-width:3px; border-color:var(--stone-2); }
+  [data-theme="y2k"] .pxinput{ background:rgba(255,255,255,.9); color:#2a1c46; border:2px solid var(--stone-2); }
   [data-theme="y2k"] .pxinput::placeholder{ color:#8a7fae; }
+  [data-theme="y2k"] .helm-icon{ filter:drop-shadow(0 0 8px rgba(255,143,201,.6)); }
 
   /* ============================================================
-     THEME: HOLOGRAM — Japanese neon-cyberpunk glass HUD
+     THEME: HOLOGRAM — technical HUD schematic, wireframe + halftone
      ============================================================ */
   [data-theme="hologram"]{
-    --void:#04010c;
-    --dusk:#0a0518;
-    --deep:#0f0a22;
-    --stone:#1a1030;
-    --stone-2:#26173f;
-    --lav:#7fe9ff;
-    --lav-lite:#c9f9ff;
-    --cream:#eafcff;
-    --gold:#00fff2;
-    --gold-deep:#00b3a8;
-    --gold-lite:#9dfff5;
-    --blood:#ff2fd0;
+    --void:#020202;
+    --dusk:#08080a;
+    --deep:#0e0e10;
+    --stone:#2a2a1a;
+    --stone-2:#3d3d24;
+    --lav:#8fd8e8;
+    --lav-lite:#eafcff;
+    --cream:#f4f2ea;
+    --gold:#f4d03f;
+    --gold-deep:#c9a622;
+    --gold-lite:#ffe98a;
+    --blood:#e8384f;
     --outline:#000000;
-    --glow:#1a0a3a;
-    --void-2:#08041a;
-    --panel-deep:#070213;
-    --footer-bg:#04010c;
-    --slot-bg:#0a0620;
-    --panel-bg:linear-gradient(180deg, rgba(15,10,34,.92), rgba(4,1,12,.96));
-    --card-bg:linear-gradient(180deg, rgba(15,10,34,.92), rgba(4,1,12,.96));
-    --header-bg:linear-gradient(180deg, rgba(15,10,34,.95), rgba(4,1,12,.98));
-    --dropzone-bg:linear-gradient(180deg, rgba(15,10,34,.85), rgba(4,1,12,.92));
-    --dropzone-drag-bg:linear-gradient(180deg, rgba(0,255,242,.12), rgba(4,1,12,.92));
-    --error-bg:linear-gradient(180deg, rgba(80,10,60,.6), rgba(20,2,15,.9));
-    --font-display:'Orbitron', sans-serif;
+    --glow:#141408;
+    --void-2:#050505;
+    --panel-deep:#000000;
+    --footer-bg:#020202;
+    --slot-bg:#0a0a0c;
+    --panel-bg:linear-gradient(180deg, rgba(14,14,16,.96), rgba(2,2,2,.98));
+    --card-bg:linear-gradient(180deg, rgba(14,14,16,.96), rgba(2,2,2,.98));
+    --header-bg:linear-gradient(180deg, rgba(14,14,16,.98), rgba(2,2,2,1));
+    --dropzone-bg:linear-gradient(180deg, rgba(14,14,16,.9), rgba(2,2,2,.95));
+    --dropzone-drag-bg:linear-gradient(180deg, rgba(244,208,63,.1), rgba(2,2,2,.95));
+    --error-bg:linear-gradient(180deg, rgba(232,56,79,.22), rgba(20,4,6,.95));
+    --font-display:'Rajdhani', sans-serif;
     --font-body:'Share Tech Mono', monospace;
-    --radius:2px;
+    --radius:0px;
   }
   [data-theme="hologram"] body{
-    background:
-      repeating-linear-gradient(0deg, rgba(0,255,242,.035) 0px, rgba(0,255,242,.035) 1px, transparent 1px, transparent 3px),
-      radial-gradient(120% 80% at 50% -10%, #140830 0%, var(--dusk) 45%, var(--void) 100%);
+    background:var(--void);
     cursor:auto;
   }
   [data-theme="hologram"] a, [data-theme="hologram"] button, [data-theme="hologram"] .clickable, [data-theme="hologram"] [role="button"]{ cursor:crosshair; }
-  [data-theme="hologram"] body::before{ display:none; }
-  [data-theme="hologram"] body::after{
-    background:radial-gradient(120% 90% at 50% 30%, transparent 30%, rgba(0,0,0,.85) 100%);
+  [data-theme="hologram"] body::before{
+    background-image:
+      linear-gradient(rgba(244,208,63,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(244,208,63,.05) 1px, transparent 1px);
+    background-size:34px 34px, 34px 34px;
   }
+  [data-theme="hologram"] body::after{
+    background:radial-gradient(120% 90% at 50% 20%, transparent 45%, rgba(0,0,0,.9) 100%);
+  }
+  [data-theme="hologram"] .deco-hologram{ display:block; }
+
+  .deco-wireframe{ width:230px; top:120px; right:-40px; opacity:.7; }
+  .deco-halftone{ width:80px; bottom:50px; left:10px; opacity:.55; }
+  .deco-hud-strip{
+    top:130px; left:14px;
+    font-family:'Share Tech Mono', monospace; font-size:10px; color:var(--gold);
+    display:none; flex-direction:column; gap:5px; letter-spacing:1px;
+  }
+  [data-theme="hologram"] .deco-hud-strip{ display:flex; }
+  .deco-hud-strip .hud-tag{
+    border:1px solid var(--gold); padding:3px 7px; opacity:.75;
+  }
+  .deco-hud-strip .hud-tag-active{ background:var(--gold); color:#000; opacity:1; }
+  .deco-hud-strip .hud-code{ margin-top:6px; opacity:.55; }
+  .deco-warn-badge{
+    bottom:24px; right:20px;
+    font-family:'Share Tech Mono', monospace; font-size:10px; letter-spacing:1px;
+    color:var(--blood); border:1px solid var(--blood); padding:5px 9px;
+    display:none;
+  }
+  [data-theme="hologram"] .deco-warn-badge{ display:block; }
 
   [data-theme="hologram"] header,
   [data-theme="hologram"] .dropzone,
-  [data-theme="hologram"] .rune,
-  [data-theme="hologram"] .item-card-frame,
-  [data-theme="hologram"] .slot,
-  [data-theme="hologram"] .slot .thumb,
-  [data-theme="hologram"] .loot-card,
   [data-theme="hologram"] .empty,
   [data-theme="hologram"] .item-card,
   [data-theme="hologram"] .scanning,
   [data-theme="hologram"] .analyze-error,
   [data-theme="hologram"] .waitlist,
-  [data-theme="hologram"] .error-msg,
-  [data-theme="hologram"] .placeholder-row{
-    border-width:1px;
-    border-color:var(--gold);
-    box-shadow:0 0 12px rgba(0,255,242,.35), inset 0 0 20px rgba(0,255,242,.06);
+  [data-theme="hologram"] .loot-card{
+    position:relative;
+    border-color:transparent;
+    box-shadow:none;
+  }
+  [data-theme="hologram"] header::before,
+  [data-theme="hologram"] .dropzone::before,
+  [data-theme="hologram"] .empty::before,
+  [data-theme="hologram"] .item-card::before,
+  [data-theme="hologram"] .scanning::before,
+  [data-theme="hologram"] .analyze-error::before,
+  [data-theme="hologram"] .waitlist::before,
+  [data-theme="hologram"] .loot-card::before{
+    content:"";
+    position:absolute; inset:0;
+    pointer-events:none;
+    background-image:
+      linear-gradient(var(--gold) 2px, transparent 2px),
+      linear-gradient(90deg, var(--gold) 2px, transparent 2px),
+      linear-gradient(var(--gold) 2px, transparent 2px),
+      linear-gradient(90deg, var(--gold) 2px, transparent 2px),
+      linear-gradient(var(--gold) 2px, transparent 2px),
+      linear-gradient(90deg, var(--gold) 2px, transparent 2px),
+      linear-gradient(var(--gold) 2px, transparent 2px),
+      linear-gradient(90deg, var(--gold) 2px, transparent 2px);
+    background-repeat:no-repeat;
+    background-size:2px 16px, 16px 2px, 2px 16px, 16px 2px, 2px 16px, 16px 2px, 2px 16px, 16px 2px;
+    background-position:top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
+  }
+  [data-theme="hologram"] .rune, [data-theme="hologram"] .item-card-frame,
+  [data-theme="hologram"] .slot, [data-theme="hologram"] .slot .thumb,
+  [data-theme="hologram"] .error-msg, [data-theme="hologram"] .placeholder-row{
+    border-width:1px; border-color:var(--gold); box-shadow:none;
   }
 
   [data-theme="hologram"] .pxbtn{
     background:transparent;
     color:var(--gold);
     border:1px solid var(--gold);
-    text-shadow:0 0 6px var(--gold);
-    box-shadow:0 0 14px rgba(0,255,242,.4), inset 0 0 12px rgba(0,255,242,.08);
-    clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+    text-shadow:none;
+    box-shadow:none;
+    letter-spacing:1.5px;
   }
-  [data-theme="hologram"] .pxbtn:hover{ background:rgba(0,255,242,.12); box-shadow:0 0 22px rgba(0,255,242,.6); }
-  [data-theme="hologram"] .pxbtn:active{ background:rgba(0,255,242,.2); }
+  [data-theme="hologram"] .pxbtn:hover{ background:rgba(244,208,63,.12); }
+  [data-theme="hologram"] .pxbtn:active{ background:rgba(244,208,63,.22); }
 
   [data-theme="hologram"] .menu, [data-theme="hologram"] .theme-btn{
-    background:rgba(0,255,242,.05);
+    background:transparent;
     border:1px solid var(--gold);
     color:var(--gold);
-    box-shadow:0 0 10px rgba(0,255,242,.3);
+    box-shadow:none;
   }
   [data-theme="hologram"] .theme-btn.active{
-    background:rgba(255,47,208,.15);
-    border-color:var(--blood);
-    color:var(--blood);
-    box-shadow:0 0 14px rgba(255,47,208,.6);
+    background:var(--gold);
+    color:#000;
+    border-color:var(--gold);
     filter:none;
   }
 
   [data-theme="hologram"] .plaque{
-    background:rgba(0,255,242,.06);
+    background:transparent;
     border:1px solid var(--gold);
     color:var(--gold);
-    text-shadow:0 0 10px var(--gold);
-    box-shadow:0 0 16px rgba(0,255,242,.4);
+    text-shadow:none;
+    box-shadow:none;
   }
-  [data-theme="hologram"] .plaque .a{ color:var(--blood); text-shadow:0 0 10px var(--blood); }
-  [data-theme="hologram"] .battlement span{ background:var(--gold); box-shadow:0 0 6px var(--gold); }
+  [data-theme="hologram"] .plaque .a{ color:var(--blood); }
+  [data-theme="hologram"] .battlement span{ background:var(--gold); box-shadow:none; }
 
   [data-theme="hologram"] h1, [data-theme="hologram"] .eyebrow, [data-theme="hologram"] .drop-title,
   [data-theme="hologram"] .waitlist-title, [data-theme="hologram"] .scan-text, [data-theme="hologram"] .loot-head h2{
-    text-shadow:0 0 10px var(--gold), 0 0 22px rgba(0,255,242,.5);
+    text-shadow:none;
+    text-transform:uppercase;
+  }
+  [data-theme="hologram"] .loot-head{ position:relative; }
+  [data-theme="hologram"] .loot-head::before{
+    content:"// DATA";
+    font-family:'Share Tech Mono', monospace; font-size:9px; color:var(--gold);
+    letter-spacing:1px; opacity:.6; margin-right:8px;
   }
 
   [data-theme="hologram"] .pxinput{
-    background:rgba(0,255,242,.05);
+    background:transparent;
     color:var(--lav-lite);
     border:1px solid var(--gold);
   }
-  [data-theme="hologram"] .pxinput::placeholder{ color:rgba(127,233,255,.4); }
-  [data-theme="hologram"] .helm-icon{ filter:drop-shadow(0 0 10px var(--gold)); }
+  [data-theme="hologram"] .pxinput::placeholder{ color:rgba(244,208,63,.4); }
+  [data-theme="hologram"] .helm-icon{ filter:none; }
+  [data-theme="hologram"] .scan-bar{ border-color:var(--gold); }
+  [data-theme="hologram"] .scan-bar-fill{ background:var(--gold); }
 </style>
 </head>
 <body>
@@ -720,6 +803,73 @@
   } catch (e) {}
 </script>
 <div class="wrap">
+
+  <!-- Theme-only decorative elements (toggled via CSS, no layout impact) -->
+  <svg class="deco deco-y2k deco-star" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="chromeStar" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fff"/>
+        <stop offset="35%" stop-color="#ffc8e8"/>
+        <stop offset="65%" stop-color="#ff8fc9"/>
+        <stop offset="100%" stop-color="#9b3f74"/>
+      </linearGradient>
+    </defs>
+    <path d="M50 2 L61 38 L98 38 L68 60 L79 96 L50 74 L21 96 L32 60 L2 38 L39 38 Z" fill="url(#chromeStar)" stroke="#fff" stroke-width="1.5" stroke-opacity=".6"/>
+  </svg>
+  <svg class="deco deco-y2k deco-heart" viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="chromeHeart" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fff"/>
+        <stop offset="40%" stop-color="#dcefff"/>
+        <stop offset="70%" stop-color="#9fb3e0"/>
+        <stop offset="100%" stop-color="#4a5a8a"/>
+      </linearGradient>
+    </defs>
+    <path d="M50 85 C10 55 0 30 20 15 C35 3 48 12 50 25 C52 12 65 3 80 15 C100 30 90 55 50 85 Z" fill="url(#chromeHeart)" stroke="#fff" stroke-width="1.5" stroke-opacity=".6"/>
+  </svg>
+  <svg class="deco deco-y2k deco-disc" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="discRing" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ff8fc9"/>
+        <stop offset="25%" stop-color="#ffe08a"/>
+        <stop offset="50%" stop-color="#8affc0"/>
+        <stop offset="75%" stop-color="#8ac0ff"/>
+        <stop offset="100%" stop-color="#c98aff"/>
+      </linearGradient>
+    </defs>
+    <circle cx="50" cy="50" r="46" fill="url(#discRing)" stroke="#fff" stroke-width="2"/>
+    <circle cx="50" cy="50" r="30" fill="none" stroke="#fff" stroke-width="1" stroke-opacity=".5"/>
+    <circle cx="50" cy="50" r="8" fill="#fff"/>
+    <path d="M20 25 A 40 40 0 0 1 60 12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+  </svg>
+
+  <svg class="deco deco-hologram deco-wireframe" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g fill="none" stroke="#8fd8e8" stroke-width="1" opacity=".7">
+      <ellipse cx="100" cy="20" rx="90" ry="14"/>
+      <ellipse cx="100" cy="60" rx="60" ry="10"/>
+      <ellipse cx="100" cy="90" rx="35" ry="7"/>
+      <line x1="10" y1="20" x2="65" y2="90"/>
+      <line x1="190" y1="20" x2="135" y2="90"/>
+      <line x1="40" y1="16" x2="80" y2="88"/>
+      <line x1="160" y1="16" x2="120" y2="88"/>
+      <line x1="100" y1="6" x2="100" y2="97"/>
+    </g>
+  </svg>
+  <svg class="deco deco-hologram deco-halftone" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <pattern id="halftonePattern" width="6" height="6" patternUnits="userSpaceOnUse">
+        <circle cx="3" cy="3" r="1.4" fill="#f4d03f"/>
+      </pattern>
+    </defs>
+    <circle cx="50" cy="50" r="48" fill="url(#halftonePattern)"/>
+  </svg>
+  <div class="deco deco-hologram deco-hud-strip" aria-hidden="true">
+    <span class="hud-tag hud-tag-active">A1</span>
+    <span class="hud-tag">A2</span>
+    <span class="hud-tag">A3</span>
+    <span class="hud-code">06_SNAG.2K</span>
+  </div>
+  <div class="deco deco-hologram deco-warn-badge" aria-hidden="true">⚠ SCAN_READY</div>
 
   <header>
     <div class="brand">
