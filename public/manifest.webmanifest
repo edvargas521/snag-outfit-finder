@@ -1,0 +1,15 @@
+{
+  "name": "SNAG — Loot the Look",
+  "short_name": "SNAG",
+  "description": "Upload a photo of any outfit — real or a 2D character — and SNAG names every piece of gear, ready to shop.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#100b1c",
+  "theme_color": "#241a3a",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
