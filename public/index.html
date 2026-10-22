@@ -331,9 +331,16 @@
     .field-row{ align-items:flex-start; flex-wrap:wrap; }
     .field-row label{ width:auto; }
     .field-input{ flex-basis:100%; }
-    .table-wrap{ overflow-x:auto; }
-    .table-head-row, .result-row{ min-width:520px; }
-    .preview-slot{ flex-wrap:wrap; }
+    /* too narrow for four columns — drop the Actions column and tuck
+       each row's actions under its item instead */
+    .table-head-row, .result-row{ grid-template-columns:32px 1fr 96px; }
+    .table-head-row span:nth-child(3){ border-right:none; }
+    .table-head-row span:nth-child(4){ display:none; }
+    .result-status{ border-right:none !important; }
+    .result-actions{ grid-column:2 / -1; flex-direction:row; gap:14px; padding-top:0 !important; }
+    .preview-slot{ flex-wrap:wrap; padding:14px 12px; gap:12px; }
+    .preview-thumb{ width:56px; height:56px; }
+    .preview-actions .win-btn{ padding-left:12px; padding-right:12px; }
   }
 </style>
 </head>
