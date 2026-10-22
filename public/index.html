@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SNAG — Loot the Look</title>
 <meta name="description" content="Upload a photo of any outfit — real or a 2D character — and SNAG names every piece of gear, ready to shop." />
-<meta name="theme-color" content="#241a3a" />
+<meta name="theme-color" content="#000000" />
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
@@ -24,40 +24,28 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Righteous&family=Quicksand:wght@500;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* dungeon palette pulled from the reference mockup */
-    --void:#100b1c;
-    --dusk:#1c1430;
-    --deep:#241a3a;
-    --stone:#3a2d5c;
-    --stone-2:#4b3b73;
-    --lav:#8a7bbd;
-    --lav-lite:#b6a9dd;
-    --cream:#e9ddbf;
-    --gold:#e9c66b;
-    --gold-deep:#b8923c;
-    --blood:#b5485f;
-    --outline:#0b0715;
-    --glow:#2b2147;
-    --void-2:#1a1230;
-    --panel-deep:#120c26;
-    --footer-bg:#150e28;
-    --slot-bg:#191130;
-    --gold-lite:#f2d178;
-    --panel-bg:linear-gradient(180deg,#1d1534,#150e28);
-    --card-bg:linear-gradient(180deg,#211736,#160f28);
-    --header-bg:linear-gradient(180deg, var(--deep) 0%, var(--void-2) 100%);
-    --dropzone-bg:linear-gradient(180deg, #221a38 0%, #17102a 100%);
-    --dropzone-drag-bg:linear-gradient(180deg,#2c2148,#1c1436);
-    --error-bg:linear-gradient(180deg,#3a1524,#2a0f1c);
-    --font-display:'Press Start 2P', monospace;
-    --font-body:'VT323', monospace;
-    --radius:0px;
-
-    /* the 8-bit knight gauntlet cursor */
-    --gauntlet:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA2ElEQVR4nGNkIABEBDT+45N/8+EGIyEz8AEmSjRTA+B0PcznTRMm4DWgrqCAgYGB/JAY8BBgIVZhkJ89Cn/dpoNUccCAh8CoA0YdQHQuIATQS0xiy4WhHwK4Ssq6ggKiQmTohwCshISVjIgScwKKOliIoIfE4AkBQvU+DKD7lFg+LjDgIcBIbL1PKcDVbhjwEMDIBej1PqVg0KeBUQdgpAFqtfWIBQMeAvA8iV4eHDt0hCKDrexsGBgYCPcbBjwEcNaGMB/QGgx4CGDEC7G1IrGAUNtwwEMAAG6sScJXb5pmAAAAAElFTkSuQmCC);
+    /* retro desktop-app palette — flat, beveled, monochrome + one LED accent */
+    --face:#c0c0c0;
+    --face-hi:#dcdcdc;
+    --face-lo:#a8a8a8;
+    --white:#ffffff;
+    --shadow:#808080;
+    --shadow-dark:#404040;
+    --black:#000000;
+    --text:#111111;
+    --text-dim:#454545;
+    --text-disabled:#8f8f8f;
+    --input-bg:#ffffff;
+    --error-bg:#ffe4e4;
+    --error-border:#b23a3a;
+    --error-text:#7a1f1f;
+    --titlebar:#000000;
+    --titlebar-text:#f4f4f4;
+    --font-ui:'Share Tech Mono', monospace;
+    --font-brand:'VT323', monospace;
   }
 
   *{box-sizing:border-box;margin:0;padding:0;}
@@ -65,1054 +53,452 @@
 
   html,body{height:100%;}
   body{
-    font-family:var(--font-body);
-    color:var(--cream);
-    background:
-      radial-gradient(120% 80% at 50% -10%, var(--glow) 0%, var(--dusk) 45%, var(--void) 100%);
+    font-family:var(--font-ui);
+    color:var(--text);
+    background:#8f8f8f;
     min-height:100%;
-    cursor: var(--gauntlet) 11 1, auto;
-    image-rendering: pixelated;
     overflow-x:hidden;
   }
 
-  /* pixel dither / brick texture overlay */
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    pointer-events:none;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,0.09) 1px, transparent 1px);
-    background-size:4px 4px, 4px 4px;
-    z-index:1;
+  /* ---------------- bevel helpers ---------------- */
+  .bevel-out{
+    border-top:1px solid var(--white);
+    border-left:1px solid var(--white);
+    border-right:1px solid var(--shadow-dark);
+    border-bottom:1px solid var(--shadow-dark);
+    box-shadow:inset -1px -1px 0 var(--shadow), inset 1px 1px 0 var(--face-hi);
   }
-  /* torch-lit vignette */
-  body::after{
-    content:"";
-    position:fixed; inset:0;
-    pointer-events:none;
-    background:radial-gradient(120% 90% at 50% 30%, transparent 40%, rgba(6,4,14,0.75) 100%);
-    z-index:1;
+  .bevel-in{
+    border-top:1px solid var(--shadow-dark);
+    border-left:1px solid var(--shadow-dark);
+    border-right:1px solid var(--white);
+    border-bottom:1px solid var(--white);
+    box-shadow:inset -1px -1px 0 var(--face-hi), inset 1px 1px 0 var(--shadow);
   }
 
-  a, button, .clickable, [role="button"]{ cursor: var(--gauntlet) 11 1, pointer; }
+  .wrap{ position:relative; z-index:2; max-width:min(1320px,94vw); margin:0 auto; padding:28px 14px 56px; }
 
-  .wrap{ position:relative; z-index:2; }
+  .app-window{ background:var(--face); }
 
-  /* ---------------- Header banner ---------------- */
-  header{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:16px; flex-wrap:wrap;
-    padding:20px clamp(16px,4vw,44px);
-    border-bottom:4px solid var(--outline);
-    background:var(--header-bg);
-    box-shadow:inset 0 -6px 0 rgba(0,0,0,.35), inset 0 4px 0 rgba(255,255,255,.04);
+  /* ---------------- title bar ---------------- */
+  .title-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--titlebar); color:var(--titlebar-text);
+    padding:6px 10px;
+    font-family:var(--font-ui); font-size:13px; letter-spacing:.5px;
+    border:1px solid var(--black);
+  }
+  .title-bar-text{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .title-bar-controls{ display:flex; gap:4px; flex:none; }
+  .tb-btn{
+    width:18px; height:16px;
+    display:grid; place-items:center;
+    background:var(--face); color:var(--text);
+    font-size:11px; line-height:1;
+    border-top:1px solid var(--white); border-left:1px solid var(--white);
+    border-right:1px solid var(--shadow-dark); border-bottom:1px solid var(--shadow-dark);
+    user-select:none;
   }
 
-  .brand{ display:flex; align-items:center; gap:14px; }
-
-  /* battlement + plaque logo, echoing the mockup */
-  .crest{ display:flex; flex-direction:column; align-items:center; }
-  .battlement{
-    display:flex; gap:4px; margin-bottom:-4px; padding-left:2px;
+  /* ---------------- app header ---------------- */
+  .app-header{
+    display:flex; align-items:center; gap:14px;
+    padding:16px 16px 14px;
+    border-left:1px solid var(--black); border-right:1px solid var(--black);
+    background:var(--face);
   }
-  .battlement span{ width:10px; height:12px; background:var(--lav); box-shadow:inset -2px -2px 0 rgba(0,0,0,.35); }
-  .plaque{
-    font-family:var(--font-display);
-    font-size:18px; letter-spacing:1px;
-    color:var(--cream);
-    background:var(--stone);
-    padding:10px 14px;
-    border:4px solid var(--outline);
-    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.12), 0 6px 0 var(--outline);
-    text-shadow:2px 2px 0 var(--outline);
+  .app-icon{
+    flex:none;
+    width:40px; height:40px;
+    display:grid; place-items:center;
   }
-  .plaque .a{ color:var(--gold); }
+  .app-icon svg{ width:100%; height:100%; display:block; }
+  .app-titles h1{
+    font-family:var(--font-brand);
+    font-size:34px; line-height:1;
+    letter-spacing:1px;
+    color:var(--text);
+  }
+  .app-sub{ font-size:13px; color:var(--text-dim); margin-top:2px; letter-spacing:.3px; }
 
-  .tag{ font-size:20px; color:var(--lav-lite); letter-spacing:1px; }
+  /* ---------------- toolbar ---------------- */
+  .toolbar{
+    display:flex; flex-wrap:wrap; gap:8px;
+    padding:0 16px 16px;
+    border-left:1px solid var(--black); border-right:1px solid var(--black);
+    background:var(--face);
+  }
+  .tool-btn{
+    font-family:var(--font-ui); font-size:13px; color:var(--text);
+    background:var(--face);
+    padding:9px 14px;
+    cursor:pointer;
+  }
+  .tool-btn:active{ transform:translate(1px,1px); }
+  .tool-btn[aria-expanded="true"]{ background:var(--input-bg); }
 
-  .menu{
-    font-family:var(--font-display);
-    font-size:9px; color:var(--cream);
-    background:var(--stone-2);
+  .how-panel{
+    margin:0 16px 16px;
     padding:12px 14px;
-    border:4px solid var(--outline);
-    box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.12);
-    transition:transform .15s ease-out, background-color .15s ease-out;
+    background:var(--input-bg);
+    font-size:13px; color:var(--text);
   }
-  .menu:hover{ transform:translateY(-2px); background:var(--stone); }
-  .menu:active{ transform:translateY(2px); box-shadow:inset 3px 3px 0 rgba(0,0,0,.45); }
+  .how-panel ol{ margin:0; padding-left:18px; line-height:1.7; }
 
-  .header-actions{ display:flex; align-items:center; gap:12px; }
-  .theme-switcher{ display:flex; gap:6px; }
-  .theme-btn{
-    width:38px; height:38px;
-    font-size:16px; line-height:1;
-    display:grid; place-items:center;
-    background:var(--stone-2);
-    border:3px solid var(--outline);
-    box-shadow:inset -2px -2px 0 rgba(0,0,0,.4), inset 2px 2px 0 rgba(255,255,255,.12);
-    transition:transform .12s ease-out, background-color .12s ease-out;
-    filter:grayscale(1) brightness(.75);
+  /* ---------------- buttons (shared) ---------------- */
+  .win-btn{
+    font-family:var(--font-ui); font-size:13px; letter-spacing:.3px;
+    color:var(--text);
+    background:var(--face);
+    padding:9px 16px;
+    cursor:pointer;
+    white-space:nowrap;
   }
-  .theme-btn:hover{ transform:translateY(-2px); filter:grayscale(.4) brightness(.95); }
-  .theme-btn.active{
-    background:var(--gold);
-    filter:none;
-    box-shadow:inset -2px -2px 0 var(--gold-deep), inset 2px 2px 0 #f7e29a, 0 0 0 2px var(--gold);
+  .win-btn.primary{ font-weight:700; }
+  .win-btn:active{ transform:translate(1px,1px); }
+  .win-btn:disabled{ color:var(--text-disabled); cursor:default; }
+  .win-btn:disabled:active{ transform:none; }
+  .beta-tag{
+    font-family:var(--font-ui); font-weight:400; font-size:9px; letter-spacing:.5px;
+    color:var(--text-dim); background:var(--input-bg);
+    padding:1px 4px; margin-left:4px; vertical-align:2px;
   }
 
-  /* ---------------- Main quest area ---------------- */
-  main{
-    max-width:820px; margin:0 auto;
-    padding:clamp(30px,7vw,64px) clamp(16px,5vw,36px) 90px;
-    text-align:center;
+  a, button, .clickable, [role="button"]{ cursor:pointer; }
+
+  /* ---------------- panel body / upload fields ---------------- */
+  .panel-body{
+    padding:16px;
+    border-left:1px solid var(--black); border-right:1px solid var(--black);
+    background:var(--face);
   }
 
-  .eyebrow{
-    font-family:var(--font-display);
-    font-size:9px; color:var(--gold);
-    letter-spacing:2px;
-    display:inline-block; margin-bottom:22px;
-    text-shadow:2px 2px 0 var(--outline);
-    animation:blink 1.4s ease-in-out infinite;
+  .field-row{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:10px;
   }
-  @keyframes blink{ 50%{opacity:.35;} }
+  .field-row label{
+    flex:none; width:64px;
+    font-size:13px; font-weight:700; color:var(--text);
+  }
+  .field-input{
+    flex:1 1 auto; min-width:0;
+    font-family:var(--font-ui); font-size:14px;
+    color:var(--text);
+    background:var(--input-bg);
+    padding:8px 10px;
+  }
+  .field-input::placeholder{ color:#8b8b8b; }
+  .field-input:focus{ outline:2px solid var(--black); outline-offset:1px; }
+  .field-input[readonly]{ color:var(--text-dim); }
 
-  h1{
-    font-family:var(--font-display);
-    font-size:clamp(18px,4.4vw,30px);
-    line-height:1.5;
-    color:var(--cream);
-    text-shadow:3px 3px 0 var(--outline), 6px 6px 0 rgba(0,0,0,.35);
-    margin-bottom:22px;
-  }
-  h1 .g{ color:var(--gold); }
+  #dropzone{ padding:2px 0; }
+  #dropzone.dragging .field-input{ background:#eef7ee; }
+  #dropzone.dragging{ outline:2px dashed var(--shadow-dark); outline-offset:4px; }
 
-  .subtitle{
-    font-size:22px; line-height:1.35;
-    color:var(--lav-lite);
-    max-width:520px; margin:0 auto 40px;
-    letter-spacing:.5px;
-  }
-
-  /* ---------------- Upload = the dungeon gate ---------------- */
-  .dropzone{
-    position:relative;
-    border:5px dashed var(--stone-2);
-    background:
-      repeating-linear-gradient(45deg, rgba(74,59,115,.18) 0 8px, rgba(36,26,58,.18) 8px 16px),
-      var(--dropzone-bg);
-    padding:clamp(34px,7vw,60px) 24px;
-    box-shadow:inset -6px -6px 0 rgba(0,0,0,.45), inset 6px 6px 0 rgba(255,255,255,.05), 0 8px 0 var(--outline);
-    transition:transform .18s ease-out, border-color .18s ease-out;
-  }
-  .dropzone:hover{ border-color:var(--gold); transform:translateY(-2px); }
-  .dropzone.dragging{ border-color:var(--gold); background:var(--dropzone-drag-bg); transform:scale(1.01); }
-
-  .rune{
-    width:76px; height:76px; margin:0 auto 20px;
-    display:grid; place-items:center;
-    background:var(--deep);
-    border:4px solid var(--outline);
-    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.08);
-    font-size:40px;
-    filter:drop-shadow(0 0 6px rgba(233,198,107,.35));
-  }
-
-  .drop-title{
-    font-family:var(--font-display);
-    font-size:13px; color:var(--cream);
-    line-height:1.7; margin-bottom:12px;
-    text-shadow:2px 2px 0 var(--outline);
-  }
-  .drop-sub{ font-size:19px; color:var(--lav); letter-spacing:.5px; }
-  .drop-or{
-    font-family:var(--font-display);
-    font-size:8px; color:var(--stone-2); margin:18px 0 14px; letter-spacing:2px;
-  }
-
-  .pxbtn{
-    font-family:var(--font-display);
-    font-size:11px; letter-spacing:1px;
-    color:var(--outline);
-    background:var(--gold);
-    padding:14px 22px;
-    border:4px solid var(--outline);
-    box-shadow:inset -4px -4px 0 var(--gold-deep), inset 4px 4px 0 #f7e29a, 0 6px 0 var(--outline);
-    transition:transform .12s ease-out, box-shadow .12s ease-out;
-  }
-  .pxbtn:hover{ background:var(--gold-lite); transform:translateY(-2px); }
-  .pxbtn:active{ transform:translateY(4px); box-shadow:inset 4px 4px 0 var(--gold-deep), 0 2px 0 var(--outline); }
-
-  .hint{ margin-top:20px; font-size:17px; color:var(--stone-2); letter-spacing:.5px; }
-
-  /* ---------------- URL cast row ---------------- */
-  .url-row{
-    display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
-    margin-bottom:4px;
-  }
-  .pxinput{
-    font-family:var(--font-body);
-    font-size:18px;
-    color:var(--cream);
-    background:var(--panel-deep);
-    border:4px solid var(--outline);
-    box-shadow:inset -3px -3px 0 rgba(0,0,0,.45), inset 3px 3px 0 rgba(255,255,255,.05);
-    padding:10px 12px;
-    flex:1 1 220px;
-    min-width:180px;
-    max-width:340px;
-  }
-  .pxinput::placeholder{ color:var(--stone-2); }
-  .pxinput:focus{ outline:2px solid var(--gold); outline-offset:2px; }
-
-  .pxbtn.small{ font-size:9px; padding:12px 14px; }
-  .pxbtn.big{ font-size:14px; padding:18px 30px; }
+  .hint-row{ margin:4px 0 12px; }
+  .hint-text{ font-size:12px; color:var(--text-dim); }
 
   .error-msg{
-    font-family:var(--font-display);
-    font-size:9px; line-height:1.7;
-    color:var(--cream);
+    font-family:var(--font-ui); font-size:13px; line-height:1.5;
+    color:var(--error-text);
     background:var(--error-bg);
-    border:3px solid var(--outline);
-    box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.06);
-    padding:12px 14px;
-    margin:16px auto 0;
-    max-width:420px;
-    text-shadow:2px 2px 0 var(--outline);
-  }
-
-  /* ---------------- Loot / results ---------------- */
-  .loot{ margin-top:58px; text-align:left; }
-  .loot-head{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
-  .loot-head h2{
-    font-family:var(--font-display);
-    font-size:12px; color:var(--gold); letter-spacing:1px;
-    text-shadow:2px 2px 0 var(--outline);
-  }
-  .loot-head .bar{ flex:1; height:4px; background:repeating-linear-gradient(90deg,var(--stone-2) 0 8px, transparent 8px 12px); }
-
-  /* ---------------- Preview item card ---------------- */
-  .item-card{
-    border:4px solid var(--outline);
-    background:var(--panel-bg);
-    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
-    padding:clamp(22px,5vw,36px) 22px;
-    text-align:center;
-    margin-bottom:26px;
-  }
-  .item-card-frame{
-    display:inline-block;
-    background:var(--panel-deep);
-    border:4px solid var(--outline);
-    padding:8px;
-    box-shadow:inset -3px -3px 0 rgba(0,0,0,.45), inset 3px 3px 0 rgba(255,255,255,.05), 0 6px 0 var(--outline);
-    margin-bottom:24px;
-  }
-  .item-card-frame img{
-    display:block;
-    width:auto; height:auto;
-    max-width:min(280px,60vw);
-    max-height:280px;
-    image-rendering:pixelated;
-    border:2px solid var(--outline);
-  }
-
-  .empty{
-    border:4px solid var(--outline);
-    background:var(--panel-bg);
-    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
-    padding:44px 22px; text-align:center;
-  }
-  .empty .helm-icon{ width:64px; height:auto; margin:0 auto 12px; filter:drop-shadow(0 0 5px rgba(138,123,189,.5)); animation:helmfloat 2.4s ease-in-out infinite; }
-  .empty p{ font-size:21px; color:var(--lav); max-width:360px; margin:0 auto; line-height:1.3; }
-  @keyframes helmfloat{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-4px);} }
-
-  .slot-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-    gap:14px; margin-top:28px;
-  }
-  .slot{
-    border:4px solid var(--outline);
-    background:var(--slot-bg);
-    box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.05);
-    padding:12px;
-    /* gentle 8-bit "empty slot" pulse */
-    animation:slotpulse 1.6s ease-in-out infinite;
-  }
-  .slot:nth-child(2){ animation-delay:.2s; }
-  .slot:nth-child(3){ animation-delay:.4s; }
-  .slot:nth-child(4){ animation-delay:.6s; }
-  @keyframes slotpulse{ 0%,100%{opacity:.55;} 50%{opacity:.85;} }
-
-  .slot .thumb{
-    width:100%; aspect-ratio:1/1; margin-bottom:12px;
-    /* dungeon inventory checker background */
-    background-color:var(--panel-deep);
-    background-image:
-      linear-gradient(45deg,var(--deep) 25%,transparent 25%,transparent 75%,var(--deep) 75%),
-      linear-gradient(45deg,var(--deep) 25%,transparent 25%,transparent 75%,var(--deep) 75%);
-    background-size:12px 12px;
-    background-position:0 0,6px 6px;
-    border:3px solid var(--outline);
-    box-shadow:inset -3px -3px 0 rgba(0,0,0,.45), inset 3px 3px 0 rgba(255,255,255,.05);
-    display:grid; place-items:center;
-  }
-  /* the pixel-art gear silhouette sits in the slot */
-  .slot .gear{
-    width:48px; height:48px;
-    image-rendering:pixelated;
-    background-repeat:no-repeat; background-position:center; background-size:48px 48px;
-    filter:drop-shadow(2px 2px 0 rgba(0,0,0,.5));
-    animation:gearbob 1.8s ease-in-out infinite;
-  }
-  @keyframes gearbob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-3px);} }
-  .gear.top  { background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAzElEQVR4nO2XsQ2DMBBFIUKiSJ0JUjJHNsgAjJJRMkA2YI6UTEBNQZWUOJJPsmO4n6/812HwyU/f4uyqEqKI2npxbE+v2Pi8TOacHLaqf9hiMUjoBT7iCmPtr7fohPtjHc+Ne4/69AnQC9QpsVqEcadQUt/aTvQJ0AsUbSFPrO1EnwC9QBM+dJdz9KPnMLos5hvoE6AXMM9CIZ5/J6s5qpH9KknHYc9mp+M0GxJAIwE0EkAjATQSQCMBNBJAIwE0EkCTfan3RJd6If6AN1oNPFDhsjWSAAAAAElFTkSuQmCC); }
-  .gear.pants{ background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAyElEQVR4nO2ZsQ2DMBREIYpEQZ0JUmYONmCAjMIoDMAGzJEyE6ROkQoqkAu+ZGM+l5PuVUgg6z/dCdlyUQiRRWm9qKvbdOYgC9/fx5xpi4vXIGdBL3CN+ejZdq5D9MP+9ekToBeIqlDIo7mvz6/xfegwe6BPgF4guUL/UJsQ+gQkgEYCaJL/QhbWfsZ7H0WfAL1AVoXC2lgnqX7o1pOdR53oE5AAGgmgkQAaCaCRABoJoJEAGgmgybojS73P8liTPgF6ASGEwDIDJuggaftnwAAAAAAASUVORK5CYII=); }
-  .gear.boot { background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAzUlEQVR4nO2ZsQ2DMBREAUWiSM0ElJkjG6SNRJcJ6BmFAbJB5kiZCVKnoCKd5SJIPn2bn5PuVS7wR093AiyqSggTNbrh2HYrcv1necP3QGhKDt8DeoGDZfNwmcL6dO7DerxdLWMh6BOgFzBVKOb5eOUaBUGfgAS8kYA3EvBGAt5IwJts30JbpJzgLKc2+gToBYpUKD6ppTDfp1AztE70CdALFH8KpRBXDq0TfQL0An9RoRi0TvQJSMAbCXgjAW/oBYr/I8uFXmRCCCF+8QUvfCZRBpmangAAAABJRU5ErkJggg==); }
-  .gear.hat  { background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAs0lEQVR4nO3WsQnDMBCFYSkEXKTOBC4zhzdwG0iXCdJnlAzgzVKncGWXUUAHERI6HvxfZyHLPO50OASgSqx5+TSct5L9n/Vd9b2cQ+sDe5MP8FdJrVa5zc/s/ss0Ztcf92t2vaa15CsgH8AsXdo2Vqu08lq+55e2k3wFCOCNAN5+bnzPyWMpnUjyFZAPEEt/ib1Y7SRfAfkAx/TBa/JY0olkka+AfACmkDf5AAAAAAAAQNQO0lskLUFyU78AAAAASUVORK5CYII=); }
-
-  /* chunky pixel skeleton bars with a smooth shimmer sweep */
-  .slot .ln{
-    height:12px; margin-bottom:9px; position:relative; overflow:hidden;
-    background:var(--stone);
-    box-shadow:inset -2px -2px 0 rgba(0,0,0,.4), inset 2px 2px 0 rgba(255,255,255,.06);
-  }
-  .slot .ln::after{
-    content:""; position:absolute; top:0; left:-40%; width:40%; height:100%;
-    background:linear-gradient(90deg,transparent,rgba(233,221,191,.35),transparent);
-    animation:sweep 1.4s linear infinite;
-    will-change:transform;
-  }
-  @keyframes sweep{ 0%{transform:translateX(0);} 100%{transform:translateX(400%);} }
-  .slot .ln.short{ width:55%; }
-  .slot .ln.price{ width:40%; background:var(--gold-deep); }
-
-  /* ---------------- Scanning (loading) state ---------------- */
-  .scanning{
-    border:4px solid var(--outline);
-    background:var(--panel-bg);
-    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
-    padding:50px 22px; text-align:center;
-  }
-  .scan-rune{
-    display:inline-block;
-    font-size:40px; margin-bottom:18px;
-    filter:drop-shadow(0 0 8px rgba(233,198,107,.55));
-    animation:scanwiggle 1.4s ease-in-out infinite;
-  }
-  @keyframes scanwiggle{ 0%,100%{transform:rotate(-8deg);} 50%{transform:rotate(8deg) scale(1.08);} }
-  .scan-text{
-    font-family:var(--font-display);
-    font-size:12px; color:var(--gold); letter-spacing:1px;
-    text-shadow:2px 2px 0 var(--outline);
-  }
-  .scan-text .dots span{ display:inline-block; opacity:0; animation:dotfade 1.2s ease-in-out infinite; }
-  .scan-text .dots span:nth-child(1){ animation-delay:0s; }
-  .scan-text .dots span:nth-child(2){ animation-delay:.2s; }
-  .scan-text .dots span:nth-child(3){ animation-delay:.4s; }
-  @keyframes dotfade{ 0%,100%{opacity:0;} 50%{opacity:1;} }
-  .scan-bar{
-    width:220px; height:14px; margin:26px auto 0;
-    border:3px solid var(--outline);
-    background:var(--panel-deep);
-    overflow:hidden;
-    box-shadow:inset -2px -2px 0 rgba(0,0,0,.4), inset 2px 2px 0 rgba(255,255,255,.05);
-  }
-  .scan-bar-fill{
-    height:100%; width:35%;
-    background:linear-gradient(90deg,var(--gold-deep),var(--gold));
-    animation:scanbar 1.3s ease-in-out infinite;
-  }
-  @keyframes scanbar{ 0%{transform:translateX(-120%);} 100%{transform:translateX(320%);} }
-
-  /* ---------------- Analyze error state ---------------- */
-  .analyze-error{
-    border:4px solid var(--outline);
-    background:var(--panel-bg);
-    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
-    padding:44px 22px; text-align:center;
-  }
-  .analyze-error .warn-rune{
-    font-size:40px; margin-bottom:14px;
-    filter:grayscale(.2) drop-shadow(0 0 6px rgba(181,72,95,.5));
-  }
-  .analyze-error p{ font-size:21px; color:var(--lav); max-width:380px; margin:0 auto 22px; line-height:1.35; }
-
-  /* ---------------- Waitlist (paid-feature gate) ---------------- */
-  .waitlist{
-    border:4px solid var(--outline);
-    background:var(--panel-bg);
-    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4), inset 4px 4px 0 rgba(255,255,255,.05);
-    padding:44px 22px; text-align:center;
-  }
-  .waitlist .lock-rune{
-    font-size:40px; margin-bottom:14px;
-    filter:drop-shadow(0 0 6px rgba(233,198,107,.5));
-  }
-  .waitlist-title{
-    font-family:var(--font-display);
-    font-size:13px; color:var(--gold); letter-spacing:1px;
-    text-shadow:2px 2px 0 var(--outline);
-    margin-bottom:14px;
-  }
-  .waitlist p.waitlist-copy{ font-size:21px; color:var(--lav); max-width:380px; margin:0 auto 22px; line-height:1.35; }
-  .waitlist-form{
-    display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
-  }
-  .waitlist-success{
-    font-family:var(--font-display);
-    font-size:11px; color:var(--gold); letter-spacing:1px;
-    text-shadow:2px 2px 0 var(--outline);
-  }
-
-  /* ---------------- Results grid ---------------- */
-  .results-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:16px;
-  }
-  .loot-card{
-    border:4px solid var(--outline);
-    background:var(--card-bg);
-    box-shadow:inset -3px -3px 0 rgba(0,0,0,.4), inset 3px 3px 0 rgba(255,255,255,.05), 0 6px 0 var(--outline);
-    padding:16px;
-  }
-  .loot-card .cat-badge{
-    display:inline-block;
-    font-family:var(--font-display);
-    font-size:8px; letter-spacing:1px; text-transform:uppercase;
-    color:var(--outline);
-    background:var(--gold);
-    padding:6px 8px;
-    border:2px solid var(--outline);
-    margin-bottom:12px;
-  }
-  .loot-card .desc{ font-size:20px; color:var(--cream); line-height:1.3; margin-bottom:8px; }
-  .loot-card .color-line{ font-size:17px; color:var(--lav-lite); margin-bottom:14px; }
-  .loot-card .placeholder-row{
-    display:flex; justify-content:space-between; align-items:center; gap:8px;
-    border:2px dashed var(--stone-2);
+    border:1px solid var(--error-border);
     padding:8px 10px;
-    margin-top:8px;
+    margin:0 0 12px;
   }
-  .loot-card .placeholder-row .label{
-    font-family:var(--font-display); font-size:8px; letter-spacing:1px; color:var(--gold-deep);
-  }
-  .loot-card .placeholder-row .val{ font-size:15px; font-style:italic; color:var(--stone-2); }
 
-  .pxbtn:disabled{ opacity:.5; }
-  .pxbtn:disabled:hover{ transform:none; background:var(--gold); }
-
-  footer{
-    position:relative; z-index:2;
-    border-top:4px solid var(--outline);
-    background:var(--footer-bg);
-    padding:26px 18px; text-align:center;
-    font-size:18px; color:var(--stone-2); letter-spacing:1px;
-  }
-  footer .press{
-    font-family:var(--font-display); font-size:9px; color:var(--gold);
-    animation:blink 1.4s ease-in-out infinite; text-shadow:2px 2px 0 var(--outline);
-  }
+  .action-row{ display:flex; gap:8px; margin-top:6px; }
 
   input[type="file"]{ display:none; }
 
-  /* decorative theme-only elements, hidden unless their theme is active */
-  .deco{ display:none; position:fixed; pointer-events:none; z-index:1; }
-  @media (max-width:1150px){ .deco{ display:none !important; } }
+  /* ---------------- results table ---------------- */
+  .loot{ margin-top:16px; }
 
-  /* per-theme icon swaps: default to the dungeon glyph, themes flip which one shows */
-  .icon-y2k, .icon-hologram{ display:none; }
-  [data-theme="y2k"] .icon-dungeon{ display:none; }
-  [data-theme="y2k"] .icon-y2k{ display:inline; }
-  [data-theme="hologram"] .icon-dungeon{ display:none; }
-  [data-theme="hologram"] .icon-hologram{ display:inline; }
-
-  .empty-icon{ display:none; font-size:52px; line-height:1; margin:0 auto 12px; animation:helmfloat 2.4s ease-in-out infinite; }
-  [data-theme="y2k"] .empty-icon.icon-y2k{ display:block; filter:drop-shadow(0 0 10px rgba(255,143,201,.6)); }
-  [data-theme="hologram"] .empty-icon.icon-hologram{ display:block; color:var(--gold); filter:none; }
-
-  /* ============================================================
-     THEME: Y2K DREAMCORE — chrome sticker collage, liminal-mall haze
-     ============================================================ */
-  [data-theme="y2k"]{
-    --void:#2a1848;
-    --dusk:#3d2566;
-    --deep:#4a2d7a;
-    --stone:#7b8fc9;
-    --stone-2:#9fb3e0;
-    --lav:#b39ce8;
-    --lav-lite:#e6d6f7;
-    --cream:#fff8fd;
-    --gold:#ff8fc9;
-    --gold-deep:#c94f96;
-    --gold-lite:#ffc8e8;
-    --blood:#ff6f8f;
-    --outline:#3d2566;
-    --glow:#6b4fa8;
-    --void-2:#231540;
-    --panel-deep:#2c1a4d;
-    --footer-bg:#1f1240;
-    --slot-bg:#33204f;
-    --panel-bg:linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(74,45,122,.55) 45%, rgba(35,21,64,.92) 100%);
-    --card-bg:linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(74,45,122,.55) 45%, rgba(35,21,64,.92) 100%);
-    --header-bg:linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(74,45,122,.75) 60%, rgba(35,21,64,.95) 100%);
-    --dropzone-bg:linear-gradient(160deg, rgba(255,255,255,.08) 0%, rgba(61,37,102,.85) 100%);
-    --dropzone-drag-bg:linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,143,201,.35));
-    --error-bg:linear-gradient(160deg, rgba(255,111,143,.3), rgba(61,20,40,.9));
-    --font-display:'Righteous', cursive;
-    --font-body:'Quicksand', sans-serif;
-    --radius:22px;
+  .table-wrap{
+    border-left:1px solid var(--black); border-right:1px solid var(--black);
+    border-bottom:1px solid var(--black);
+    background:var(--input-bg);
   }
-  [data-theme="y2k"] body{
-    background:
-      repeating-linear-gradient(180deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 3px),
-      radial-gradient(110% 70% at 15% -10%, rgba(143,232,255,.28) 0%, transparent 45%),
-      radial-gradient(100% 80% at 95% 10%, rgba(255,143,201,.32) 0%, transparent 55%),
-      radial-gradient(120% 90% at 50% 100%, rgba(179,156,232,.25) 0%, transparent 50%),
-      linear-gradient(180deg, var(--dusk) 0%, var(--void) 100%);
-    cursor:auto;
+  .table-head-row{
+    display:grid; grid-template-columns:44px 1fr 130px 190px;
+    background:var(--face-hi);
+    border-top:1px solid var(--black); border-bottom:1px solid var(--shadow);
+    font-size:12px; font-weight:700; letter-spacing:.5px; color:var(--text);
   }
-  [data-theme="y2k"] a, [data-theme="y2k"] button, [data-theme="y2k"] .clickable, [data-theme="y2k"] [role="button"]{ cursor:pointer; }
-  [data-theme="y2k"] body::before{ display:none; }
-  [data-theme="y2k"] body::after{ display:none; }
-  [data-theme="y2k"] .deco-y2k{ display:block; }
+  .table-head-row span{ padding:8px 10px; border-right:1px solid var(--shadow); }
+  .table-head-row span:last-child{ border-right:none; }
 
-  .deco-star{ width:64px; top:96px; left:22px; transform:rotate(-16deg); filter:drop-shadow(0 8px 12px rgba(20,10,40,.45)); }
-  .deco-heart{ width:60px; bottom:70px; right:26px; transform:rotate(13deg); filter:drop-shadow(0 8px 12px rgba(20,10,40,.45)); }
-  .deco-disc{ width:52px; top:160px; right:30px; transform:rotate(-9deg); filter:drop-shadow(0 8px 12px rgba(20,10,40,.45)); animation:discspin 9s linear infinite; }
-  @keyframes discspin{ 0%{transform:rotate(-9deg);} 100%{transform:rotate(351deg);} }
+  .table-body{ min-height:120px; }
 
-  [data-theme="y2k"] .plaque,
-  [data-theme="y2k"] .menu,
-  [data-theme="y2k"] .theme-btn,
-  [data-theme="y2k"] .pxbtn,
-  [data-theme="y2k"] .pxinput,
-  [data-theme="y2k"] .rune,
-  [data-theme="y2k"] .item-card-frame,
-  [data-theme="y2k"] .slot,
-  [data-theme="y2k"] .slot .thumb,
-  [data-theme="y2k"] .loot-card,
-  [data-theme="y2k"] .placeholder-row,
-  [data-theme="y2k"] .error-msg,
-  [data-theme="y2k"] .cat-badge{
-    border-radius:var(--radius);
-  }
+  .state-slot{ padding:34px 20px; text-align:center; color:var(--text-dim); font-size:14px; }
+  .state-slot p{ max-width:400px; margin:0 auto; line-height:1.4; }
 
-  [data-theme="y2k"] .pxbtn{
-    position:relative; overflow:hidden;
-    background:linear-gradient(180deg,#fff 0%,#ffd6ee 22%,var(--gold) 58%,var(--gold-deep) 100%);
-    box-shadow:0 5px 16px rgba(105,60,150,.5), inset 0 1px 0 rgba(255,255,255,.85), inset 0 -6px 10px rgba(120,40,90,.3);
-    border:2px solid rgba(255,255,255,.7);
-    color:#3a1c46;
-    text-shadow:none;
+  /* preview slot (upload -> identify) */
+  .preview-slot{
+    display:flex; align-items:center; gap:16px;
+    padding:16px 18px; text-align:left;
   }
-  [data-theme="y2k"] .pxbtn::after{
-    content:"";
-    position:absolute; inset:0;
-    background:linear-gradient(120deg,#ff8fc9,#ffe08a,#8affc0,#8ac0ff,#c98aff);
-    opacity:0; transition:opacity .25s ease-out;
+  .preview-thumb{
+    flex:none; width:72px; height:72px;
+    background:var(--face-hi);
+    overflow:hidden;
   }
-  [data-theme="y2k"] .pxbtn:hover::after{ opacity:.35; }
-  [data-theme="y2k"] .pxbtn span, [data-theme="y2k"] .pxbtn{ z-index:1; }
-  [data-theme="y2k"] .pxbtn:active{ box-shadow:0 2px 6px rgba(105,60,150,.45), inset 0 1px 0 rgba(255,255,255,.6); }
+  .preview-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .preview-info{ flex:1; min-width:0; }
+  .preview-info .preview-name{
+    font-size:13px; color:var(--text); word-break:break-all;
+    margin-bottom:10px;
+  }
+  .preview-actions{ display:flex; gap:8px; flex-wrap:wrap; }
 
-  [data-theme="y2k"] .menu, [data-theme="y2k"] .theme-btn{
-    background:linear-gradient(180deg,#eef3ff 0%,#c3d3f5 45%,#8ea0d9 100%);
-    border:2px solid rgba(255,255,255,.7);
-    color:#2a2350;
-    box-shadow:0 4px 12px rgba(60,50,120,.4), inset 0 1px 0 rgba(255,255,255,.85);
+  /* scanning slot */
+  .scan-bar{
+    width:220px; height:14px; margin:16px auto 0;
+    background:var(--input-bg);
+    overflow:hidden;
   }
-  [data-theme="y2k"] .theme-btn.active{
-    background:linear-gradient(180deg,#fff 0%,#ffd6ee 55%,var(--gold) 100%);
-    box-shadow:0 0 0 2px var(--gold), 0 4px 12px rgba(255,143,201,.55);
-    filter:none;
+  .scan-bar-fill{
+    height:100%; width:35%;
+    background:repeating-linear-gradient(45deg, var(--shadow-dark) 0 6px, var(--face) 6px 12px);
+    animation:scanbar 1.1s linear infinite;
+  }
+  @keyframes scanbar{ 0%{transform:translateX(-120%);} 100%{transform:translateX(320%);} }
+
+  /* waitlist slot */
+  .waitlist-title{ font-weight:700; color:var(--text); margin-bottom:8px; }
+  .waitlist-form{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+  .waitlist-success{ font-size:13px; color:var(--text); font-weight:700; }
+
+  /* results rows */
+  .results-rows{}
+  .result-row{
+    display:grid; grid-template-columns:44px 1fr 130px 190px;
+    border-bottom:1px solid #ddd;
+    font-size:13px;
+  }
+  .result-row:last-child{ border-bottom:none; }
+  .result-row > div{ padding:10px; border-right:1px solid #eee; }
+  .result-row > div:last-child{ border-right:none; }
+  .result-idx{ color:var(--text-dim); }
+  .result-title{ color:var(--text); margin-bottom:3px; }
+  .result-color{ color:var(--text-dim); font-size:12px; }
+  .result-status{ text-transform:uppercase; letter-spacing:.3px; font-size:12px; color:var(--text); }
+  .result-actions{ display:flex; flex-direction:column; gap:2px; font-size:12px; color:#8b8b8b; font-style:italic; }
+
+  /* ---------------- status bar ---------------- */
+  .status-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:5px 12px;
+    background:var(--face);
+    border-left:1px solid var(--black); border-right:1px solid var(--black); border-bottom:1px solid var(--black);
+    font-size:12px; color:var(--text-dim);
   }
 
-  [data-theme="y2k"] .plaque{
-    background:linear-gradient(180deg,#fff 0%,#e6d6f7 45%,#b39ce8 100%);
-    color:#2a1c46; text-shadow:none;
-    border:2px solid rgba(255,255,255,.8);
-  }
-  [data-theme="y2k"] .plaque .a{ color:var(--gold-deep); }
-  [data-theme="y2k"] .battlement{ gap:5px; }
-  [data-theme="y2k"] .battlement span{
-    width:9px; height:9px; border-radius:50%;
-    background:linear-gradient(160deg,#fff,#b39ce8 70%);
-    box-shadow:0 2px 4px rgba(20,10,40,.4);
-  }
-
-  [data-theme="y2k"] h1, [data-theme="y2k"] .eyebrow, [data-theme="y2k"] .drop-title,
-  [data-theme="y2k"] .waitlist-title, [data-theme="y2k"] .scan-text, [data-theme="y2k"] .loot-head h2{
-    text-shadow:0 2px 0 rgba(255,255,255,.4), 0 0 20px rgba(255,143,201,.55);
-  }
-
-  [data-theme="y2k"] .dropzone{ border-style:solid; border-width:3px; border-color:var(--stone-2); }
-  [data-theme="y2k"] .pxinput{ background:rgba(255,255,255,.9); color:#2a1c46; border:2px solid var(--stone-2); }
-  [data-theme="y2k"] .pxinput::placeholder{ color:#8a7fae; }
-  [data-theme="y2k"] .helm-icon{ filter:drop-shadow(0 0 8px rgba(255,143,201,.6)); }
-
-  /* ============================================================
-     THEME: HOLOGRAM — technical HUD schematic, wireframe + halftone
-     ============================================================ */
-  [data-theme="hologram"]{
-    --void:#020202;
-    --dusk:#08080a;
-    --deep:#0e0e10;
-    --stone:#2a2a1a;
-    --stone-2:#3d3d24;
-    --lav:#8fd8e8;
-    --lav-lite:#eafcff;
-    --cream:#f4f2ea;
-    --gold:#f4d03f;
-    --gold-deep:#c9a622;
-    --gold-lite:#ffe98a;
-    --blood:#e8384f;
-    --outline:#000000;
-    --glow:#141408;
-    --void-2:#050505;
-    --panel-deep:#000000;
-    --footer-bg:#020202;
-    --slot-bg:#0a0a0c;
-    --panel-bg:linear-gradient(180deg, rgba(14,14,16,.96), rgba(2,2,2,.98));
-    --card-bg:linear-gradient(180deg, rgba(14,14,16,.96), rgba(2,2,2,.98));
-    --header-bg:linear-gradient(180deg, rgba(14,14,16,.98), rgba(2,2,2,1));
-    --dropzone-bg:linear-gradient(180deg, rgba(14,14,16,.9), rgba(2,2,2,.95));
-    --dropzone-drag-bg:linear-gradient(180deg, rgba(244,208,63,.1), rgba(2,2,2,.95));
-    --error-bg:linear-gradient(180deg, rgba(232,56,79,.22), rgba(20,4,6,.95));
-    --font-display:'Rajdhani', sans-serif;
-    --font-body:'Share Tech Mono', monospace;
-    --radius:0px;
-  }
-  [data-theme="hologram"] body{
-    background:var(--void);
-    cursor:auto;
-  }
-  [data-theme="hologram"] a, [data-theme="hologram"] button, [data-theme="hologram"] .clickable, [data-theme="hologram"] [role="button"]{ cursor:crosshair; }
-  [data-theme="hologram"] body::before{
-    background-image:
-      linear-gradient(rgba(244,208,63,.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(244,208,63,.05) 1px, transparent 1px);
-    background-size:34px 34px, 34px 34px;
-  }
-  [data-theme="hologram"] body::after{
-    background:radial-gradient(120% 90% at 50% 20%, transparent 45%, rgba(0,0,0,.9) 100%);
-  }
-  [data-theme="hologram"] .deco-hologram{ display:block; }
-
-  .deco-wireframe{ width:230px; top:120px; right:-40px; opacity:.7; }
-  .deco-halftone{ width:80px; bottom:50px; left:10px; opacity:.55; }
-  .deco-hud-strip{
-    top:130px; left:14px;
-    font-family:'Share Tech Mono', monospace; font-size:10px; color:var(--gold);
-    display:none; flex-direction:column; gap:5px; letter-spacing:1px;
-  }
-  [data-theme="hologram"] .deco-hud-strip{ display:flex; }
-  .deco-hud-strip .hud-tag{
-    border:1px solid var(--gold); padding:3px 7px; opacity:.75;
-  }
-  .deco-hud-strip .hud-tag-active{ background:var(--gold); color:#000; opacity:1; }
-  .deco-hud-strip .hud-code{ margin-top:6px; opacity:.55; }
-  .deco-warn-badge{
-    bottom:24px; right:20px;
-    font-family:'Share Tech Mono', monospace; font-size:10px; letter-spacing:1px;
-    color:var(--blood); border:1px solid var(--blood); padding:5px 9px;
-    display:none;
-  }
-  [data-theme="hologram"] .deco-warn-badge{ display:block; }
-
-  [data-theme="hologram"] header,
-  [data-theme="hologram"] .dropzone,
-  [data-theme="hologram"] .empty,
-  [data-theme="hologram"] .item-card,
-  [data-theme="hologram"] .scanning,
-  [data-theme="hologram"] .analyze-error,
-  [data-theme="hologram"] .waitlist,
-  [data-theme="hologram"] .loot-card{
-    position:relative;
-    border-color:transparent;
-    box-shadow:none;
-  }
-  [data-theme="hologram"] header::before,
-  [data-theme="hologram"] .dropzone::before,
-  [data-theme="hologram"] .empty::before,
-  [data-theme="hologram"] .item-card::before,
-  [data-theme="hologram"] .scanning::before,
-  [data-theme="hologram"] .analyze-error::before,
-  [data-theme="hologram"] .waitlist::before,
-  [data-theme="hologram"] .loot-card::before{
-    content:"";
-    position:absolute; inset:0;
-    pointer-events:none;
-    background-image:
-      linear-gradient(var(--gold) 2px, transparent 2px),
-      linear-gradient(90deg, var(--gold) 2px, transparent 2px),
-      linear-gradient(var(--gold) 2px, transparent 2px),
-      linear-gradient(90deg, var(--gold) 2px, transparent 2px),
-      linear-gradient(var(--gold) 2px, transparent 2px),
-      linear-gradient(90deg, var(--gold) 2px, transparent 2px),
-      linear-gradient(var(--gold) 2px, transparent 2px),
-      linear-gradient(90deg, var(--gold) 2px, transparent 2px);
-    background-repeat:no-repeat;
-    background-size:2px 16px, 16px 2px, 2px 16px, 16px 2px, 2px 16px, 16px 2px, 2px 16px, 16px 2px;
-    background-position:top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
-  }
-  [data-theme="hologram"] .rune, [data-theme="hologram"] .item-card-frame,
-  [data-theme="hologram"] .slot, [data-theme="hologram"] .slot .thumb,
-  [data-theme="hologram"] .error-msg, [data-theme="hologram"] .placeholder-row{
-    border-width:1px; border-color:var(--gold); box-shadow:none;
+  /* scale the whole window up on roomy desktop viewports so it doesn't
+     look lost in a sea of gray on a large monitor */
+  @media (min-width:900px){
+    .title-bar{ font-size:15px; padding:9px 14px; }
+    .tb-btn{ width:22px; height:19px; font-size:13px; }
+    .app-header{ padding:22px 22px 20px; gap:18px; }
+    .app-icon{ width:56px; height:56px; }
+    .app-titles h1{ font-size:46px; }
+    .app-sub{ font-size:16px; }
+    .toolbar{ padding:0 22px 20px; }
+    .tool-btn{ font-size:15px; padding:11px 18px; }
+    .how-panel{ margin:0 22px 20px; padding:16px 18px; font-size:15px; }
+    .win-btn{ font-size:15px; padding:11px 20px; }
+    .panel-body{ padding:22px; }
+    .field-row{ margin-bottom:14px; }
+    .field-row label{ width:76px; font-size:15px; }
+    .field-input{ font-size:16px; padding:11px 14px; }
+    .hint-text{ font-size:14px; }
+    .error-msg{ font-size:14px; padding:11px 14px; }
+    .table-head-row{ font-size:14px; }
+    .table-head-row span{ padding:11px 14px; }
+    .table-body{ min-height:220px; }
+    .state-slot{ padding:60px 24px; font-size:16px; }
+    .preview-slot{ padding:22px 24px; gap:20px; }
+    .preview-thumb{ width:96px; height:96px; }
+    .preview-info .preview-name{ font-size:15px; margin-bottom:14px; }
+    .result-row{ font-size:15px; }
+    .result-row > div{ padding:14px; }
+    .result-color, .result-status, .result-actions{ font-size:13px; }
+    .status-bar{ font-size:13px; padding:8px 14px; }
   }
 
-  [data-theme="hologram"] .pxbtn{
-    background:transparent;
-    color:var(--gold);
-    border:1px solid var(--gold);
-    text-shadow:none;
-    box-shadow:none;
-    letter-spacing:1.5px;
+  @media (max-width:620px){
+    .field-row{ align-items:flex-start; flex-wrap:wrap; }
+    .field-row label{ width:auto; }
+    .field-input{ flex-basis:100%; }
+    .table-wrap{ overflow-x:auto; }
+    .table-head-row, .result-row{ min-width:520px; }
+    .preview-slot{ flex-wrap:wrap; }
   }
-  [data-theme="hologram"] .pxbtn:hover{ background:rgba(244,208,63,.12); }
-  [data-theme="hologram"] .pxbtn:active{ background:rgba(244,208,63,.22); }
-
-  [data-theme="hologram"] .menu, [data-theme="hologram"] .theme-btn{
-    background:transparent;
-    border:1px solid var(--gold);
-    color:var(--gold);
-    box-shadow:none;
-  }
-  [data-theme="hologram"] .theme-btn.active{
-    background:var(--gold);
-    color:#000;
-    border-color:var(--gold);
-    filter:none;
-  }
-
-  [data-theme="hologram"] .plaque{
-    background:transparent;
-    border:1px solid var(--gold);
-    color:var(--gold);
-    text-shadow:none;
-    box-shadow:none;
-  }
-  [data-theme="hologram"] .plaque .a{ color:var(--blood); }
-  [data-theme="hologram"] .battlement span{ background:var(--gold); box-shadow:none; }
-
-  [data-theme="hologram"] h1, [data-theme="hologram"] .eyebrow, [data-theme="hologram"] .drop-title,
-  [data-theme="hologram"] .waitlist-title, [data-theme="hologram"] .scan-text, [data-theme="hologram"] .loot-head h2{
-    text-shadow:none;
-    text-transform:uppercase;
-  }
-  [data-theme="hologram"] .loot-head{ position:relative; }
-  [data-theme="hologram"] .loot-head::before{
-    content:"// DATA";
-    font-family:'Share Tech Mono', monospace; font-size:9px; color:var(--gold);
-    letter-spacing:1px; opacity:.6; margin-right:8px;
-  }
-
-  [data-theme="hologram"] .pxinput{
-    background:transparent;
-    color:var(--lav-lite);
-    border:1px solid var(--gold);
-  }
-  [data-theme="hologram"] .pxinput::placeholder{ color:rgba(244,208,63,.4); }
-  [data-theme="hologram"] .helm-icon{ filter:none; }
-  [data-theme="hologram"] .scan-bar{ border-color:var(--gold); }
-  [data-theme="hologram"] .scan-bar-fill{ background:var(--gold); }
 </style>
 </head>
 <body>
 <noscript>
-  <div style="max-width:520px;margin:80px auto;padding:24px;text-align:center;font-family:sans-serif;background:#241a3a;color:#e9ddbf;border:4px solid #0b0715;">
+  <div style="max-width:520px;margin:80px auto;padding:24px;text-align:center;font-family:monospace;background:#c0c0c0;color:#111;border:2px solid #000;">
     SNAG needs JavaScript to work — please enable it in your browser to upload and identify outfits.
   </div>
 </noscript>
-<script>
-  // Applied before first paint so switching themes on reload doesn't flash the default look.
-  try {
-    var savedTheme = localStorage.getItem('snag-theme');
-    if (savedTheme === 'y2k' || savedTheme === 'hologram') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-  } catch (e) {}
-</script>
 <div class="wrap">
+  <div class="app-window">
 
-  <!-- Theme-only decorative elements (toggled via CSS, no layout impact) -->
-  <svg class="deco deco-y2k deco-star" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <linearGradient id="chromeStar" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#fff"/>
-        <stop offset="35%" stop-color="#ffc8e8"/>
-        <stop offset="65%" stop-color="#ff8fc9"/>
-        <stop offset="100%" stop-color="#9b3f74"/>
-      </linearGradient>
-    </defs>
-    <path d="M50 2 L61 38 L98 38 L68 60 L79 96 L50 74 L21 96 L32 60 L2 38 L39 38 Z" fill="url(#chromeStar)" stroke="#fff" stroke-width="1.5" stroke-opacity=".6"/>
-  </svg>
-  <svg class="deco deco-y2k deco-heart" viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <linearGradient id="chromeHeart" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#fff"/>
-        <stop offset="40%" stop-color="#dcefff"/>
-        <stop offset="70%" stop-color="#9fb3e0"/>
-        <stop offset="100%" stop-color="#4a5a8a"/>
-      </linearGradient>
-    </defs>
-    <path d="M50 85 C10 55 0 30 20 15 C35 3 48 12 50 25 C52 12 65 3 80 15 C100 30 90 55 50 85 Z" fill="url(#chromeHeart)" stroke="#fff" stroke-width="1.5" stroke-opacity=".6"/>
-  </svg>
-  <svg class="deco deco-y2k deco-disc" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <linearGradient id="discRing" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#ff8fc9"/>
-        <stop offset="25%" stop-color="#ffe08a"/>
-        <stop offset="50%" stop-color="#8affc0"/>
-        <stop offset="75%" stop-color="#8ac0ff"/>
-        <stop offset="100%" stop-color="#c98aff"/>
-      </linearGradient>
-    </defs>
-    <circle cx="50" cy="50" r="46" fill="url(#discRing)" stroke="#fff" stroke-width="2"/>
-    <circle cx="50" cy="50" r="30" fill="none" stroke="#fff" stroke-width="1" stroke-opacity=".5"/>
-    <circle cx="50" cy="50" r="8" fill="#fff"/>
-    <path d="M20 25 A 40 40 0 0 1 60 12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/>
-  </svg>
-
-  <svg class="deco deco-hologram deco-wireframe" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <g fill="none" stroke="#8fd8e8" stroke-width="1" opacity=".7">
-      <ellipse cx="100" cy="20" rx="90" ry="14"/>
-      <ellipse cx="100" cy="60" rx="60" ry="10"/>
-      <ellipse cx="100" cy="90" rx="35" ry="7"/>
-      <line x1="10" y1="20" x2="65" y2="90"/>
-      <line x1="190" y1="20" x2="135" y2="90"/>
-      <line x1="40" y1="16" x2="80" y2="88"/>
-      <line x1="160" y1="16" x2="120" y2="88"/>
-      <line x1="100" y1="6" x2="100" y2="97"/>
-    </g>
-  </svg>
-  <svg class="deco deco-hologram deco-halftone" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <pattern id="halftonePattern" width="6" height="6" patternUnits="userSpaceOnUse">
-        <circle cx="3" cy="3" r="1.4" fill="#f4d03f"/>
-      </pattern>
-    </defs>
-    <circle cx="50" cy="50" r="48" fill="url(#halftonePattern)"/>
-  </svg>
-  <div class="deco deco-hologram deco-hud-strip" aria-hidden="true">
-    <span class="hud-tag hud-tag-active">A1</span>
-    <span class="hud-tag">A2</span>
-    <span class="hud-tag">A3</span>
-    <span class="hud-code">06_SNAG.2K</span>
-  </div>
-  <div class="deco deco-hologram deco-warn-badge" aria-hidden="true">⚠ SCAN_READY</div>
-
-  <header>
-    <div class="brand">
-      <div class="crest">
-        <div class="battlement"><span></span><span></span><span></span><span></span><span></span></div>
-        <div class="plaque">SN<span class="a">A</span>G</div>
+    <div class="title-bar">
+      <span class="title-bar-text">SNAG — v1.0.0 [<span id="clock">--</span>]</span>
+      <div class="title-bar-controls" aria-hidden="true">
+        <span class="tb-btn">–</span><span class="tb-btn">▢</span><span class="tb-btn">×</span>
       </div>
-      <span class="tag">▸ Loot the Look</span>
     </div>
-    <div class="header-actions">
-      <div class="theme-switcher" role="group" aria-label="Choose a visual theme">
-        <button class="theme-btn" data-theme-choice="dungeon" title="Dungeon" aria-label="Dungeon theme">⚔</button>
-        <button class="theme-btn" data-theme-choice="y2k" title="Y2K Dreamcore" aria-label="Y2K Dreamcore theme">💿</button>
-        <button class="theme-btn" data-theme-choice="hologram" title="Hologram" aria-label="Hologram theme">👾</button>
+
+    <div class="app-header">
+      <div class="app-icon" aria-hidden="true">
+        <svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <rect width="512" height="512" fill="#000000"/>
+          <path d="M96,180 L156,140 L206,140 L256,180 L306,140 L356,140 L416,180 L386,250 L356,220 L356,400 L156,400 L156,220 L126,250 Z" fill="#e8e8e8"/>
+          <rect x="240" y="152" width="32" height="16" fill="#22c55e"/>
+          <text x="256" y="300" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="150" text-anchor="middle" dominant-baseline="central" fill="#141414">S</text>
+        </svg>
       </div>
-      <button class="menu">HOW IT WORKS</button>
+      <div class="app-titles">
+        <h1>SNAG</h1>
+        <p class="app-sub">AI outfit finder — loot the look</p>
+      </div>
     </div>
-  </header>
 
-  <main>
-    <span class="eyebrow">✦ AI OUTFIT QUEST ✦</span>
-    <h1>Any outfit,<br><span class="g">looted &amp; priced</span>.</h1>
-    <p class="subtitle">
-      Cast a photo of any hero — real or 2D — into the gate. SNAG names every
-      piece of their gear, what it costs, and where to claim it.
-    </p>
+    <nav class="toolbar">
+      <button class="tool-btn bevel-out" id="howItWorksBtn" type="button" aria-expanded="false" aria-controls="howItWorksPanel">HOW IT WORKS ▸</button>
+    </nav>
 
-    <!-- Upload = the dungeon gate -->
-    <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Upload an outfit photo">
-      <div class="rune">
-        <span class="icon-dungeon">🛡️</span>
-        <span class="icon-y2k" aria-hidden="true">🪩</span>
-        <span class="icon-hologram" aria-hidden="true">⌖</span>
+    <div class="how-panel bevel-in" id="howItWorksPanel" hidden>
+      <ol>
+        <li>Add a photo — drop it, choose a file, or paste an image URL.</li>
+        <li>Click <strong>Identify Outfit</strong> to scan it.</li>
+        <li>Get every piece named, with its category and color, ready to shop.</li>
+      </ol>
+    </div>
+
+    <main class="panel-body">
+      <div class="field-row" id="dropzone" role="button" tabindex="0" aria-label="Upload an outfit photo">
+        <label for="sourceDisplay">Source:</label>
+        <input type="text" id="sourceDisplay" class="field-input bevel-in" readonly
+               placeholder="Drop a photo here, or choose a file below" aria-label="Chosen photo" />
+        <button class="win-btn bevel-out" id="browseBtn" type="button">Choose…</button>
+        <input type="file" id="fileInput" accept="image/*" />
       </div>
-      <div class="drop-title">DROP AN OUTFIT PHOTO HERE</div>
-      <div class="drop-sub">PNG · JPG · WEBP — a person or a 2D character</div>
-      <div class="drop-or">— OR —</div>
-      <button class="pxbtn" id="browseBtn">BROWSE THE VAULT</button>
-      <div class="drop-or">— OR CAST A URL —</div>
-      <div class="url-row">
-        <input type="text" id="urlInput" class="pxinput" placeholder="https://image-url.png" aria-label="Image URL" />
-        <button class="pxbtn small" id="urlBtn">⚡ CAST</button>
+      <div class="field-row">
+        <label for="urlInput">URL:</label>
+        <input type="text" id="urlInput" class="field-input bevel-in" placeholder="https://image-url.png" aria-label="Image URL" />
+        <button class="win-btn bevel-out" id="urlBtn" type="button">Load</button>
+      </div>
+      <div class="field-row hint-row">
+        <span class="hint-text">JPG · PNG · WEBP, up to 10MB — a real photo or a 2D character. Photos stay private until you click Identify.</span>
       </div>
       <div class="error-msg" id="uploadError" hidden></div>
-      <div class="hint">Thy photo stays private. Nothing is analyzed until ye give the word.</div>
-      <input type="file" id="fileInput" accept="image/*" />
+
+      <section class="loot">
+        <div class="table-wrap">
+          <div class="table-head-row" aria-hidden="true">
+            <span>#</span><span>Item</span><span>Status</span><span>Actions</span>
+          </div>
+          <div class="table-body">
+
+            <div class="preview-slot" id="itemCard" hidden>
+              <div class="preview-thumb"><img id="previewImg" alt="Uploaded outfit preview" /></div>
+              <div class="preview-info">
+                <div class="preview-name" id="previewName">Photo loaded.</div>
+                <div class="preview-actions">
+                  <button class="win-btn primary bevel-out" id="identifyBtn" type="button">Identify Outfit <span class="beta-tag">BETA</span></button>
+                  <button class="win-btn bevel-out" id="clearBtn" type="button">Clear</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-slot" id="emptyState">
+              <p>No photo loaded yet. Add one above to see its loot here.</p>
+            </div>
+
+            <div class="state-slot" id="waitlistState" hidden>
+              <div class="waitlist-title">Detection isn't live yet</div>
+              <p>Outfit identification launches soon. Leave your email and we'll let you know.</p>
+              <form class="waitlist-form" id="waitlistForm">
+                <input type="email" id="waitlistEmail" name="email" class="field-input bevel-in" placeholder="you@example.com" required style="max-width:240px;" />
+                <button type="submit" class="win-btn primary bevel-out" id="waitlistSubmit">Join waitlist</button>
+              </form>
+              <div class="waitlist-success" id="waitlistSuccess" hidden>You're on the list.</div>
+              <div class="error-msg" id="waitlistError" hidden style="margin:14px auto 0;max-width:320px;">Couldn't submit — try again.</div>
+            </div>
+
+            <div class="state-slot" id="scanningState" hidden>
+              <p>Identifying outfit…</p>
+              <div class="scan-bar bevel-in"><div class="scan-bar-fill"></div></div>
+            </div>
+
+            <div class="state-slot" id="analyzeError" hidden>
+              <p id="analyzeErrorText">Something went wrong — try again.</p>
+              <button class="win-btn bevel-out" id="retryBtn" type="button" style="margin-top:10px;">Try again</button>
+            </div>
+
+            <div class="results-rows" id="resultsGrid" hidden></div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="status-bar">
+      <span id="statusText">Ready.</span>
+      <span>SNAG · AI outfit finder</span>
     </div>
 
-    <!-- Loot / results (empty shell) -->
-    <section class="loot">
-      <div class="loot-head">
-        <h2>◆ THE HAUL</h2>
-        <div class="bar"></div>
-      </div>
-
-      <div class="item-card" id="itemCard" hidden>
-        <div class="item-card-frame">
-          <img id="previewImg" alt="Uploaded outfit preview" />
-        </div>
-        <button class="pxbtn big" id="identifyBtn"><span class="icon-dungeon">⚔</span><span class="icon-y2k" aria-hidden="true">✨</span><span class="icon-hologram" aria-hidden="true">▶</span> IDENTIFY THE OUTFIT</button>
-      </div>
-
-      <div class="empty" id="emptyState">
-        <svg class="helm-icon icon-dungeon" viewBox="0 0 14 16" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="5" y="0" width="2" height="1" fill="var(--lav-lite)"/>
-          <rect x="7" y="0" width="2" height="1" fill="var(--lav)"/>
-          <rect x="4" y="1" width="3" height="1" fill="var(--lav-lite)"/>
-          <rect x="7" y="1" width="3" height="1" fill="var(--lav)"/>
-          <rect x="3" y="2" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="7" y="2" width="4" height="1" fill="var(--lav)"/>
-          <rect x="2" y="3" width="5" height="1" fill="var(--lav-lite)"/>
-          <rect x="7" y="3" width="5" height="1" fill="var(--lav)"/>
-          <rect x="0" y="4" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="4" width="6" height="1" fill="var(--lav)"/>
-          <rect x="10" y="4" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="5" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="5" width="6" height="1" fill="var(--lav)"/>
-          <rect x="10" y="5" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="6" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="6" width="6" height="1" fill="var(--lav)"/>
-          <rect x="10" y="6" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="7" width="3" height="1" fill="var(--lav-lite)"/>
-          <rect x="3" y="7" width="8" height="1" fill="var(--outline)"/>
-          <rect x="11" y="7" width="3" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="8" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="8" width="6" height="1" fill="var(--outline)"/>
-          <rect x="10" y="8" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="9" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="9" width="2" height="1" fill="var(--lav)"/>
-          <rect x="6" y="9" width="2" height="1" fill="var(--outline)"/>
-          <rect x="8" y="9" width="2" height="1" fill="var(--lav)"/>
-          <rect x="10" y="9" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="10" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="10" width="3" height="1" fill="var(--lav)"/>
-          <rect x="7" y="10" width="1" height="1" fill="var(--outline)"/>
-          <rect x="8" y="10" width="2" height="1" fill="var(--lav)"/>
-          <rect x="10" y="10" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="11" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="11" width="6" height="1" fill="var(--lav)"/>
-          <rect x="10" y="11" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="12" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="12" width="6" height="1" fill="var(--lav)"/>
-          <rect x="10" y="12" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="1" y="13" width="3" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="13" width="6" height="1" fill="var(--lav)"/>
-          <rect x="10" y="13" width="3" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="14" width="4" height="1" fill="var(--lav-lite)"/>
-          <rect x="4" y="14" width="6" height="1" fill="var(--lav)"/>
-          <rect x="10" y="14" width="4" height="1" fill="var(--stone-2)"/>
-          <rect x="0" y="15" width="14" height="1" fill="var(--stone-2)"/>
-        </svg>
-        <span class="empty-icon icon-y2k" aria-hidden="true">💖</span>
-        <span class="empty-icon icon-hologram" aria-hidden="true">◎</span>
-        <p>No loot yet, adventurer. Each piece — with its price and cheaper &amp; pricier swaps — appears here after the quest.</p>
-
-        <div class="slot-grid" aria-hidden="true">
-          <div class="slot"><div class="thumb"><div class="gear top"></div></div><div class="ln"></div><div class="ln short"></div><div class="ln price"></div></div>
-          <div class="slot"><div class="thumb"><div class="gear pants"></div></div><div class="ln"></div><div class="ln short"></div><div class="ln price"></div></div>
-          <div class="slot"><div class="thumb"><div class="gear boot"></div></div><div class="ln"></div><div class="ln short"></div><div class="ln price"></div></div>
-          <div class="slot"><div class="thumb"><div class="gear hat"></div></div><div class="ln"></div><div class="ln short"></div><div class="ln price"></div></div>
-        </div>
-      </div>
-
-      <div class="waitlist" id="waitlistState" hidden>
-        <div class="lock-rune">
-          <span class="icon-dungeon">🔒</span>
-          <span class="icon-y2k" aria-hidden="true">💌</span>
-          <span class="icon-hologram" aria-hidden="true">⛔</span>
-        </div>
-        <div class="waitlist-title">THE FORGE IS NOT YET LIT</div>
-        <p class="waitlist-copy">Outfit scrying is coming soon, adventurer. Leave thy scroll (email) and we'll summon thee the moment the gate opens.</p>
-        <form class="waitlist-form" id="waitlistForm">
-          <input type="email" id="waitlistEmail" name="email" class="pxinput" placeholder="you@example.com" required />
-          <button type="submit" class="pxbtn small" id="waitlistSubmit"><span class="icon-dungeon">📜</span><span class="icon-y2k" aria-hidden="true">💖</span><span class="icon-hologram" aria-hidden="true">▶</span> JOIN THE WAITLIST</button>
-        </form>
-        <div class="waitlist-success" id="waitlistSuccess" hidden>✦ Thou art on the list, adventurer! ✦</div>
-        <div class="error-msg" id="waitlistError" hidden>⚠ That scroll didn't send. Try again, adventurer.</div>
-      </div>
-
-      <div class="scanning" id="scanningState" hidden>
-        <div class="scan-rune">
-          <span class="icon-dungeon">⚔</span>
-          <span class="icon-y2k" aria-hidden="true">⚡</span>
-          <span class="icon-hologram" aria-hidden="true">⟳</span>
-        </div>
-        <div class="scan-text">SCANNING THE HERO'S GEAR<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
-        <div class="scan-bar"><div class="scan-bar-fill"></div></div>
-      </div>
-
-      <div class="analyze-error" id="analyzeError" hidden>
-        <div class="warn-rune">
-          <span class="icon-dungeon">☠</span>
-          <span class="icon-y2k" aria-hidden="true">💔</span>
-          <span class="icon-hologram" aria-hidden="true">⚠</span>
-        </div>
-        <p id="analyzeErrorText">The scrying orb went dark — try again, adventurer.</p>
-        <button class="pxbtn" id="retryBtn">↺ TRY AGAIN</button>
-      </div>
-
-      <div class="results-grid" id="resultsGrid" hidden></div>
-    </section>
-  </main>
-
-  <footer>
-    <span class="press">▸ TAP TO START YOUR QUEST</span><br><br>
-    Forged in the SNAG dungeon · the AI outfit finder
-  </footer>
-
+  </div>
 </div>
 
 <script>
-  const themeButtons = document.querySelectorAll('.theme-btn');
-  const applyTheme = (theme) => {
-    if (theme === 'dungeon') {
-      document.documentElement.removeAttribute('data-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', theme);
-    }
-    try { localStorage.setItem('snag-theme', theme); } catch (e) {}
-    themeButtons.forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.themeChoice === theme);
-    });
+  const clockEl = document.getElementById('clock');
+  const pad = (n) => String(n).padStart(2, '0');
+  const tickClock = () => {
+    const d = new Date();
+    clockEl.textContent = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   };
-  themeButtons.forEach((btn) => {
-    btn.addEventListener('click', () => applyTheme(btn.dataset.themeChoice));
-  });
-  applyTheme(document.documentElement.getAttribute('data-theme') || 'dungeon');
+  tickClock();
+  setInterval(tickClock, 1000);
 
-  const dropzone   = document.getElementById('dropzone');
-  const fileInput  = document.getElementById('fileInput');
-  const browseBtn  = document.getElementById('browseBtn');
-  const urlInput   = document.getElementById('urlInput');
-  const urlBtn     = document.getElementById('urlBtn');
+  const howItWorksBtn = document.getElementById('howItWorksBtn');
+  const howItWorksPanel = document.getElementById('howItWorksPanel');
+  howItWorksBtn.addEventListener('click', () => {
+    const open = howItWorksPanel.hidden;
+    howItWorksPanel.hidden = !open;
+    howItWorksBtn.setAttribute('aria-expanded', String(open));
+    howItWorksBtn.textContent = open ? 'HOW IT WORKS ▾' : 'HOW IT WORKS ▸';
+  });
+
+  const dropzone    = document.getElementById('dropzone');
+  const fileInput   = document.getElementById('fileInput');
+  const browseBtn   = document.getElementById('browseBtn');
+  const sourceDisplay = document.getElementById('sourceDisplay');
+  const urlInput    = document.getElementById('urlInput');
+  const urlBtn      = document.getElementById('urlBtn');
   const uploadError = document.getElementById('uploadError');
-  const itemCard   = document.getElementById('itemCard');
-  const emptyState = document.getElementById('emptyState');
-  const previewImg = document.getElementById('previewImg');
+  const itemCard    = document.getElementById('itemCard');
+  const emptyState  = document.getElementById('emptyState');
+  const previewImg  = document.getElementById('previewImg');
+  const previewName = document.getElementById('previewName');
   const identifyBtn = document.getElementById('identifyBtn');
+  const clearBtn    = document.getElementById('clearBtn');
   const scanningState = document.getElementById('scanningState');
-  const analyzeError = document.getElementById('analyzeError');
+  const analyzeError  = document.getElementById('analyzeError');
   const analyzeErrorText = document.getElementById('analyzeErrorText');
-  const retryBtn = document.getElementById('retryBtn');
-  const resultsGrid = document.getElementById('resultsGrid');
+  const retryBtn     = document.getElementById('retryBtn');
+  const resultsGrid  = document.getElementById('resultsGrid');
   const waitlistState = document.getElementById('waitlistState');
-  const waitlistForm = document.getElementById('waitlistForm');
-  const waitlistEmail = document.getElementById('waitlistEmail');
+  const waitlistForm  = document.getElementById('waitlistForm');
   const waitlistSubmit = document.getElementById('waitlistSubmit');
   const waitlistSuccess = document.getElementById('waitlistSuccess');
-  const waitlistError = document.getElementById('waitlistError');
+  const waitlistError   = document.getElementById('waitlistError');
+  const statusText   = document.getElementById('statusText');
 
   // Detection is free-tier-launch gated: swap this for the real Formspree
   // endpoint from your Formspree dashboard before deploying.
@@ -1126,6 +512,7 @@
 
   const showError = (msg) => { uploadError.textContent = msg; uploadError.hidden = false; };
   const clearError = () => { uploadError.hidden = true; uploadError.textContent = ''; };
+  const setStatus = (msg) => { statusText.textContent = msg; };
 
   const resetAnalysisStates = () => {
     scanningState.hidden = true;
@@ -1138,11 +525,14 @@
     waitlistError.hidden = true;
   };
 
-  const showPreview = (src) => {
+  const showPreview = (src, label) => {
     previewImg.src = src;
+    previewName.textContent = label;
+    sourceDisplay.value = label;
     itemCard.hidden = false;
     emptyState.hidden = true;
     resetAnalysisStates();
+    setStatus('Photo loaded.');
   };
 
   const escapeHtml = (str) => {
@@ -1154,23 +544,27 @@
   function renderResults(items){
     resultsGrid.innerHTML = '';
     if (!items.length) {
-      analyzeErrorText.textContent = 'No gear spotted on this hero, adventurer. Try a clearer photo.';
+      analyzeErrorText.textContent = 'No items detected in this photo. Try a clearer image.';
       analyzeError.hidden = false;
+      setStatus('No items found.');
       return;
     }
-    items.forEach((item) => {
-      const card = document.createElement('div');
-      card.className = 'loot-card';
-      card.innerHTML = `
-        <span class="cat-badge">${escapeHtml(item.category || 'item')}</span>
-        <p class="desc">${escapeHtml(item.description || 'Unknown item')}</p>
-        <p class="color-line">Color: ${escapeHtml(item.color || '—')}</p>
-        <div class="placeholder-row"><span class="label">◆ PRICE</span><span class="val">coming soon</span></div>
-        <div class="placeholder-row"><span class="label">◆ BUY LINK</span><span class="val">coming soon</span></div>
+    items.forEach((item, i) => {
+      const row = document.createElement('div');
+      row.className = 'result-row';
+      row.innerHTML = `
+        <div class="result-idx">${i + 1}</div>
+        <div>
+          <div class="result-title">${escapeHtml(item.description || 'Unknown item')}</div>
+          <div class="result-color">Color: ${escapeHtml(item.color || '—')}</div>
+        </div>
+        <div class="result-status">${escapeHtml(item.category || 'item')}</div>
+        <div class="result-actions"><span>Price: soon</span><span>Buy: soon</span></div>
       `;
-      resultsGrid.appendChild(card);
+      resultsGrid.appendChild(row);
     });
     resultsGrid.hidden = false;
+    setStatus(`${items.length} item${items.length === 1 ? '' : 's'} found.`);
   }
 
   async function identifyOutfit(){
@@ -1178,6 +572,7 @@
     resetAnalysisStates();
     scanningState.hidden = false;
     identifyBtn.disabled = true;
+    setStatus('Identifying outfit…');
 
     try {
       const res = await fetch('/api/analyze', {
@@ -1191,8 +586,9 @@
       renderResults(Array.isArray(data.items) ? data.items : []);
     } catch (err) {
       scanningState.hidden = true;
-      analyzeErrorText.textContent = 'The scrying orb went dark — try again, adventurer.';
+      analyzeErrorText.textContent = 'Something went wrong — try again.';
       analyzeError.hidden = false;
+      setStatus('Error.');
     } finally {
       identifyBtn.disabled = false;
     }
@@ -1201,19 +597,19 @@
   function handleFile(file){
     clearError();
     if (!file || !ACCEPTED_TYPES.includes(file.type)) {
-      showError('⚠ That scroll is unreadable, adventurer. (Use a JPG, PNG, or WEBP image.)');
+      showError('That file type isn’t supported. Use a JPG, PNG, or WEBP image.');
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
-      showError('⚠ That scroll is too heavy to carry, adventurer. (Keep it under 10MB.)');
+      showError('That file is too large. Keep it under 10MB.');
       return;
     }
     const reader = new FileReader();
     reader.onload = () => {
       outfitImage = { source: 'file', file, url: null, dataUrl: reader.result };
-      showPreview(reader.result);
+      showPreview(reader.result, file.name);
     };
-    reader.onerror = () => showError('⚠ That scroll is unreadable, adventurer.');
+    reader.onerror = () => showError('That file couldn’t be read.');
     reader.readAsDataURL(file);
   }
 
@@ -1223,10 +619,21 @@
     const img = new Image();
     img.onload = () => {
       outfitImage = { source: 'url', file: null, url, dataUrl: url };
-      showPreview(url);
+      showPreview(url, url);
     };
-    img.onerror = () => showError('⚠ That scroll is unreadable, adventurer. (Could not load that image URL.)');
+    img.onerror = () => showError('Couldn’t load that image URL.');
     img.src = url;
+  }
+
+  function clearAll(){
+    outfitImage = null;
+    sourceDisplay.value = '';
+    urlInput.value = '';
+    clearError();
+    itemCard.hidden = true;
+    emptyState.hidden = false;
+    resetAnalysisStates();
+    setStatus('Ready.');
   }
 
   const openPicker = () => fileInput.click();
@@ -1252,7 +659,7 @@
     fileInput.value = '';
   });
 
-  // URL row sits inside the dropzone — keep its clicks/keys from opening the file picker.
+  // URL row sits inside the dropzone's row group — keep its clicks/keys from opening the file picker.
   urlInput.addEventListener('click', (e) => e.stopPropagation());
   urlInput.addEventListener('keydown', (e) => {
     e.stopPropagation();
@@ -1267,7 +674,9 @@
     e.stopPropagation();
     resetAnalysisStates();
     waitlistState.hidden = false;
+    setStatus('Waitlist.');
   });
+  clearBtn.addEventListener('click', (e) => { e.stopPropagation(); clearAll(); });
   retryBtn.addEventListener('click', (e) => { e.stopPropagation(); identifyOutfit(); });
 
   waitlistForm.addEventListener('click', (e) => e.stopPropagation());

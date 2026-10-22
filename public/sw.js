@@ -1,4 +1,4 @@
-const CACHE_NAME = 'snag-shell-v1';
+const CACHE_NAME = 'snag-shell-v5';
 const SHELL_ASSETS = [
   '/',
   '/favicon.svg',
